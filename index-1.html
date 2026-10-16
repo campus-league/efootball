@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a1a">
+<title>Campus League — eFootball</title>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --bg:#0a0a1a; --bg2:#12122a;
+    --card:rgba(255,255,255,0.05);
+    --border:rgba(255,255,255,0.1);
+    --neon:#7c3aed; --neon2:#06b6d4;
+    --pink:#ec4899; --gold:#fbbf24;
+    --green:#10b981; --red:#ef4444;
+    --text:#f1f5f9; --muted:#94a3b8;
+  }
+  html,body{
+    min-height:100%; background:var(--bg); color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    overscroll-behavior:none;
+  }
+  body{
+    background:
+      radial-gradient(circle at 10% 0%,rgba(124,58,237,0.15),transparent 40%),
+      radial-gradient(circle at 90% 100%,rgba(6,182,212,0.15),transparent 40%),
+      var(--bg);
+    min-height:100vh;
+    padding-bottom:80px;
+  }
+
+  #splash{
+    position:fixed; inset:0; z-index:9999;
+    background:linear-gradient(135deg,#0a0a1a,#1a0a3a);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:opacity .6s,visibility .6s;
+  }
+  #splash.hide{opacity:0;visibility:hidden;}
+  .splash-logo{
+    font-size:36px; font-weight:900; letter-spacing:-1px; text-align:center;
+    background:linear-gradient(135deg,var(--neon),var(--neon2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    animation:pulse 1.5s ease infinite;
+  }
+  .splash-sub{color:var(--muted); margin-top:8px; font-size:12px; letter-spacing:4px; text-transform:uppercase;}
+  .loader{margin-top:40px; width:180px; height:3px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;}
+  .loader::after{content:''; display:block; height:100%; width:40%; background:linear-gradient(90deg,var(--neon),var(--neon2)); animation:load 1.2s ease infinite; border-radius:3px;}
+  @keyframes load{0%{transform:translateX(-100%);} 100%{transform:translateX(350%);}}
+  @keyframes pulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.05);}}
+
+  #authScreen{display:none; padding:24px 20px; max-width:520px; margin:0 auto; min-height:100vh;}
+  #authScreen.active{display:block;}
+  .auth-logo{text-align:center; margin-top:20px; margin-bottom:28px;}
+  .auth-logo h1{font-size:28px; font-weight:900; letter-spacing:-1px; background:linear-gradient(135deg,var(--neon),var(--neon2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .auth-logo p{color:var(--muted); font-size:12px; margin-top:6px; letter-spacing:2px; text-transform:uppercase;}
+
+  .tabs{display:flex; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:4px; margin-bottom:20px;}
+  .tab{flex:1; padding:10px; text-align:center; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; color:var(--muted); transition:all .2s;}
+  .tab.active{background:linear-gradient(135deg,var(--neon),var(--pink)); color:white;}
+
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600;}
+  .form-group label .req{color:var(--red);}
+  .form-group input,.form-group select,.form-group textarea{
+    width:100%; padding:12px 14px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; color:var(--text); font-size:14px; font-family:inherit; outline:none; transition:border-color .2s;
+  }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--neon);}
+  .form-group input.error{border-color:var(--red);}
+  .form-hint{font-size:11px; color:var(--muted); margin-top:4px;}
+  .form-err{font-size:11px; color:var(--red); margin-top:4px; display:none;}
+  .form-err.show{display:block;}
+
+  .pic-upload{display:flex; align-items:center; gap:14px;}
+  .pic-preview{
+    width:70px; height:70px; border-radius:50%;
+    background:var(--card); border:2px dashed var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; overflow:hidden; cursor:pointer; flex-shrink:0;
+  }
+  .pic-preview img{width:100%; height:100%; object-fit:cover;}
+
+  .screenshot-upload{
+    display:flex; align-items:center; gap:14px;
+    padding:12px; border:2px dashed var(--border); border-radius:14px;
+    cursor:pointer; transition:border-color .2s;
+  }
+  .screenshot-upload:hover{border-color:var(--neon);}
+  .screenshot-preview{
+    width:80px; height:80px; border-radius:10px;
+    background:var(--card); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; overflow:hidden; flex-shrink:0;
+  }
+  .screenshot-preview img{width:100%; height:100%; object-fit:cover;}
+
+  .btn{
+    display:block; width:100%; padding:14px; border:none; border-radius:14px;
+    font-size:14px; font-weight:700; font-family:inherit; cursor:pointer;
+    transition:all .2s; text-align:center;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn:disabled{opacity:0.6; cursor:not-allowed;}
+  .btn-primary{background:linear-gradient(135deg,var(--neon),var(--pink)); color:white; box-shadow:0 6px 20px rgba(124,58,237,0.4);}
+  .btn-outline{background:transparent; border:1px solid var(--border); color:var(--text);}
+  .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626); color:white;}
+  .btn-success{background:linear-gradient(135deg,#10b981,#059669); color:white;}
+  .btn-sm{padding:8px 14px; width:auto; font-size:12px; display:inline-block;}
+
+  header{
+    position:sticky; top:0; z-index:100;
+    backdrop-filter:blur(20px); background:rgba(10,10,26,0.85);
+    border-bottom:1px solid var(--border); padding:12px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+  }
+  .header-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .admin-switch-btn{
+    background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(6,182,212,0.15));
+    border:1px solid rgba(124,58,237,0.4);
+    color:var(--text);
+    padding:6px 10px; border-radius:10px;
+    font-size:11px; font-weight:700;
+    cursor:pointer; white-space:nowrap;
+    font-family:inherit;
+    transition:all .2s;
+  }
+  .admin-switch-btn:active{transform:scale(0.95);}
+  .logo{font-size:16px; font-weight:800; letter-spacing:-0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .logo span{background:linear-gradient(135deg,var(--neon),var(--neon2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .header-right{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .avatar-sm{
+    width:34px; height:34px; border-radius:50%; overflow:hidden;
+    background:linear-gradient(135deg,var(--neon),var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:13px; cursor:pointer; flex-shrink:0;
+  }
+  .avatar-sm img{width:100%; height:100%; object-fit:cover;}
+
+  main{padding:16px; max-width:600px; margin:0 auto;}
+  .page{display:none; animation:fadeUp .3s ease;}
+  .page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);}}
+
+  .hero{
+    background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(6,182,212,0.2));
+    border:1px solid var(--border); border-radius:20px;
+    padding:20px; margin-bottom:20px; position:relative; overflow:hidden;
+  }
+  .hero::before{
+    content:''; position:absolute; top:-50%; right:-20%;
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle,rgba(236,72,153,0.3),transparent 70%);
+  }
+  .hero h1{font-size:20px; font-weight:800; margin-bottom:6px; position:relative;}
+  .hero p{font-size:13px; color:var(--muted); position:relative;}
+
+  .section-title{display:flex; align-items:center; justify-content:space-between; margin:22px 0 12px;}
+  .section-title h2{font-size:16px; font-weight:700;}
+  .section-title a{font-size:12px; color:var(--neon2); text-decoration:none; font-weight:600; cursor:pointer;}
+
+  .t-card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:14px; margin-bottom:12px;
+    cursor:pointer; transition:all .2s ease;
+    position:relative; overflow:hidden;
+  }
+  .t-card:active{transform:scale(0.98);}
+  .t-card::before{content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--neon),var(--neon2));}
+  .t-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:10px;}
+  .t-name{font-size:14px; font-weight:700; line-height:1.3;}
+  .t-status{font-size:10px; padding:3px 8px; border-radius:10px; font-weight:700; text-transform:uppercase; white-space:nowrap;}
+  .t-status.live{background:rgba(239,68,68,0.2); color:#fca5a5;}
+  .t-status.open{background:rgba(16,185,129,0.2); color:#6ee7b7;}
+  .t-status.upcoming{background:rgba(251,191,36,0.2); color:#fcd34d;}
+  .t-status.completed{background:rgba(148,163,184,0.2); color:#cbd5e1;}
+  .t-status.cancelled{background:rgba(239,68,68,0.2); color:#fca5a5;}
+  .t-status.pending{background:rgba(251,191,36,0.2); color:#fcd34d;}
+  .t-status.approved{background:rgba(16,185,129,0.2); color:#6ee7b7;}
+  .t-status.denied{background:rgba(239,68,68,0.2); color:#fca5a5;}
+  .t-meta{display:flex; gap:12px; font-size:11px; color:var(--muted); margin-top:8px; flex-wrap:wrap;}
+  .t-meta span{display:flex; align-items:center; gap:4px;}
+  .t-prize{color:var(--gold); font-weight:700;}
+  .t-free{background:rgba(16,185,129,0.15); color:#6ee7b7; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:700;}
+
+  .empty{text-align:center; padding:40px 20px; color:var(--muted);}
+  .empty .ico{font-size:48px; margin-bottom:12px; opacity:0.5;}
+
+  nav.bottom{
+    position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background:rgba(10,10,26,0.95);
+    backdrop-filter:blur(20px); border-top:1px solid var(--border);
+    display:flex; justify-content:space-around;
+    padding:8px 0 max(8px,env(safe-area-inset-bottom));
+  }
+  .nav-item{flex:1; text-align:center; padding:6px 4px; cursor:pointer; color:var(--muted); transition:color .2s;}
+  .nav-item.active{color:var(--neon2);}
+  .nav-item .ico{font-size:20px; display:block; margin-bottom:2px;}
+  .nav-item .lbl{font-size:10px; font-weight:600;}
+
+  .modal{
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(0,0,0,0.75); backdrop-filter:blur(4px);
+    display:none; align-items:flex-end; justify-content:center;
+  }
+  .modal.show{display:flex; animation:fadeIn .2s;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  .modal-content{
+    background:var(--bg2); border-radius:24px 24px 0 0;
+    width:100%; max-width:600px; max-height:92vh; overflow-y:auto;
+    padding:24px 20px; animation:slideUp .3s ease;
+    border-top:1px solid var(--border);
+  }
+  @keyframes slideUp{from{transform:translateY(100%);} to{transform:translateY(0);}}
+  .modal-handle{width:40px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 16px;}
+  .modal-title{font-size:18px; font-weight:800; margin-bottom:4px;}
+  .modal-sub{font-size:12px; color:var(--muted); margin-bottom:20px;}
+
+  #toast{
+    position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:linear-gradient(135deg,var(--neon),var(--pink)); color:white;
+    padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600;
+    z-index:2000; opacity:0; pointer-events:none;
+    transition:all .3s ease; box-shadow:0 8px 30px rgba(124,58,237,0.5);
+    max-width:90%; word-break:break-word;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #toast.error{background:linear-gradient(135deg,#ef4444,#dc2626);}
+
+  .profile-header{text-align:center; padding:16px 0;}
+  .profile-avatar{
+    width:90px; height:90px; border-radius:50%; overflow:hidden;
+    background:linear-gradient(135deg,var(--neon),var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; font-weight:800; margin:0 auto 12px;
+    box-shadow:0 0 30px rgba(124,58,237,0.5);
+  }
+  .profile-avatar img{width:100%; height:100%; object-fit:cover;}
+  .profile-name{font-size:20px; font-weight:800;}
+  .profile-college{font-size:13px; color:var(--muted); margin-top:4px;}
+
+  .info-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 14px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; margin-bottom:8px;
+  }
+  .info-label{font-size:12px; color:var(--muted);}
+  .info-value{font-size:13px; font-weight:600; text-align:right; max-width:60%; word-break:break-word;}
+
+  #adminScreen{display:none; min-height:100vh; padding-bottom:80px;}
+  #adminScreen.active{display:block;}
+  .admin-header{
+    background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(6,182,212,0.2));
+    padding:14px 16px; border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0; z-index:100; backdrop-filter:blur(20px);
+    gap:10px;
+  }
+  .admin-title{font-size:16px; font-weight:800; white-space:nowrap;}
+  .admin-title span{background:linear-gradient(135deg,var(--neon),var(--neon2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .admin-header-actions{display:flex; gap:8px; flex-shrink:0;}
+  .member-switch-btn{
+    background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.15));
+    border:1px solid rgba(16,185,129,0.4);
+    color:var(--text);
+    padding:6px 12px; border-radius:10px;
+    font-size:11px; font-weight:700;
+    cursor:pointer; white-space:nowrap;
+    font-family:inherit;
+    transition:all .2s;
+  }
+  .member-switch-btn:active{transform:scale(0.95);}
+
+  .stats-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;}
+  .stat-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center;}
+  .stat-val{font-size:22px; font-weight:800; color:var(--neon2);}
+  .stat-lbl{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px;}
+
+  .admin-nav{display:flex; gap:8px; overflow-x:auto; padding:12px 16px; border-bottom:1px solid var(--border); scrollbar-width:none;}
+  .admin-nav::-webkit-scrollbar{display:none;}
+  .admin-tab{padding:8px 16px; background:var(--card); border:1px solid var(--border); border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer;}
+  .admin-tab.active{background:linear-gradient(135deg,var(--neon),var(--pink)); border-color:transparent;}
+
+  .admin-page{display:none; padding:16px; max-width:800px; margin:0 auto;}
+  .admin-page.active{display:block;}
+
+  .member-row{
+    display:flex; align-items:center; gap:12px;
+    padding:12px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; margin-bottom:8px;
+  }
+  .member-pic{width:42px; height:42px; border-radius:50%; overflow:hidden; background:linear-gradient(135deg,var(--neon),var(--pink)); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;}
+  .member-pic img{width:100%; height:100%; object-fit:cover;}
+  .member-info{flex:1; min-width:0;}
+  .member-name{font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .member-sub{font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .member-actions{display:flex; gap:6px;}
+
+  .reg-card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:12px; margin-bottom:10px;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .reg-screenshot{
+    width:70px; height:70px; border-radius:10px; overflow:hidden;
+    border:1px solid var(--border); cursor:pointer; flex-shrink:0;
+    background:var(--bg2); display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+  }
+  .reg-screenshot img{width:100%; height:100%; object-fit:cover;}
+  .reg-details{flex:1; min-width:0;}
+  .reg-name{font-size:13px; font-weight:700;}
+  .reg-meta{font-size:11px; color:var(--muted); margin-top:2px;}
+  .reg-actions{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;}
+
+  .search-bar{display:flex; gap:8px; margin-bottom:14px;}
+  .search-bar input{
+    flex:1; padding:10px 14px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; color:var(--text); font-size:13px; outline:none;
+  }
+
+  .badge{font-size:10px; padding:2px 8px; border-radius:8px; font-weight:700;}
+  .badge.admin{background:rgba(251,191,36,0.2); color:#fcd34d;}
+  .badge.banned{background:rgba(239,68,68,0.2); color:#fca5a5;}
+  .badge.pending{background:rgba(251,191,36,0.2); color:#fcd34d;}
+  .badge.approved{background:rgba(16,185,129,0.2); color:#6ee7b7;}
+  .badge.denied{background:rgba(239,68,68,0.2); color:#fca5a5;}
+
+  .divider{height:1px; background:var(--border); margin:20px 0;}
+
+  /* EF HUB */
+  #page-efhub{padding:0; max-width:100%; margin:0;}
+  .efhub-wrap{
+    position:fixed; top:56px; bottom:60px; left:0; right:0;
+    background:#000; z-index:50;
+    display:flex; flex-direction:column;
+  }
+  .efhub-bar{
+    background:var(--bg2); border-bottom:1px solid var(--border);
+    padding:8px 12px; display:flex; justify-content:space-between; align-items:center;
+    flex-shrink:0;
+  }
+  .efhub-title{font-size:13px; font-weight:700;}
+  .efhub-title span{background:linear-gradient(135deg,var(--neon2),var(--pink)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .efhub-frame{flex:1; width:100%; border:none; background:#fff;}
+  .efhub-fallback{
+    display:none; position:absolute; inset:40px 0 0 0;
+    background:var(--bg2); padding:30px 20px; text-align:center;
+    flex-direction:column; justify-content:center; align-items:center;
+    z-index:2;
+  }
+  .efhub-fallback.show{display:flex;}
+  .efhub-fallback .ico{font-size:60px; margin-bottom:16px;}
+  .efhub-fallback h3{font-size:16px; font-weight:800; margin-bottom:8px;}
+  .efhub-fallback p{font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;}
+
+  @media (max-width: 380px){
+    .logo span{display:none;}
+    .admin-switch-btn{padding:6px 8px; font-size:10px;}
+    .member-switch-btn{padding:6px 8px; font-size:10px;}
+    .nav-item .lbl{font-size:9px;}
+    .nav-item .ico{font-size:18px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-logo">⚽ CAMPUS LEAGUE<br>eFOOTBALL</div>
+  <div class="splash-sub">Swat's Esports Arena</div>
+  <div class="loader"></div>
+</div>
+
+<div id="authScreen">
+  <div class="auth-logo">
+    <h1>⚽ Campus League</h1>
+    <p>eFootball Championship</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</div>
+    <div class="tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</div>
+  </div>
+
+  <div id="loginForm">
+    <div class="form-group">
+      <label>CNIC Number <span class="req">*</span></label>
+      <input type="text" id="loginCnic" placeholder="12345-1234567-1" maxlength="15" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>Password <span class="req">*</span></label>
+      <input type="password" id="loginPassword" placeholder="Enter your password">
+    </div>
+    <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Login</button>
+    <button class="btn btn-outline" style="margin-top:12px;" onclick="showAdminLogin()">🔐 Admin Login</button>
+  </div>
+
+  <div id="signupForm" style="display:none;">
+    <div class="form-group">
+      <label>Profile Picture <span class="req">*</span></label>
+      <div class="pic-upload">
+        <div class="pic-preview" id="picPreview" onclick="document.getElementById('picInput').click()">📷</div>
+        <div style="flex:1;">
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('picInput').click()">Choose Photo</button>
+          <div class="form-hint">Max 2MB. JPG/PNG.</div>
+        </div>
+      </div>
+      <input type="file" id="picInput" accept="image/*" style="display:none;" onchange="handlePicSelect(event)">
+    </div>
+
+    <div class="form-group">
+      <label>Full Name <span class="req">*</span></label>
+      <input type="text" id="signupName" placeholder="e.g. Ahmed Khan">
+    </div>
+
+    <div class="form-group">
+      <label>CNIC Number <span class="req">*</span></label>
+      <input type="text" id="signupCnic" placeholder="12345-1234567-1" maxlength="15" inputmode="numeric">
+      <div class="form-hint">Format: XXXXX-XXXXXXX-X (13 digits)</div>
+      <div class="form-err" id="errCnic">Invalid CNIC format</div>
+    </div>
+
+    <div class="form-group">
+      <label>WhatsApp Number <span class="req">*</span></label>
+      <input type="tel" id="signupPhone" placeholder="03XXXXXXXXX" maxlength="13">
+      <div class="form-hint">Pakistani number (03XX-XXXXXXX)</div>
+      <div class="form-err" id="errPhone">Invalid phone number</div>
+    </div>
+
+    <div class="form-group">
+      <label>School / College / University <span class="req">*</span></label>
+      <input type="text" id="signupCollege" placeholder="e.g. Swat University">
+    </div>
+
+    <div class="form-group">
+      <label>Exact Location <span class="req">*</span></label>
+      <input type="text" id="signupLocation" placeholder="e.g. Mingora, Swat">
+      <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="getLocation()">📍 Use My Current Location</button>
+    </div>
+
+    <div class="form-group">
+      <label>Password <span class="req">*</span></label>
+      <input type="password" id="signupPassword" placeholder="Min 6 characters">
+      <div class="form-err" id="errPassword">Password must be at least 6 characters</div>
+    </div>
+
+    <div class="form-group">
+      <label>Twitch ID Link (Optional)</label>
+      <input type="url" id="signupTwitch" placeholder="https://twitch.tv/yourname">
+      <div class="form-hint">⚠️ Compulsory for tournament participation</div>
+    </div>
+
+    <button class="btn btn-primary" id="signupBtn" onclick="doSignup()">Create Account</button>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<div id="appScreen" style="display:none;">
+  <header>
+    <div class="header-left">
+      <button class="admin-switch-btn" onclick="showAdminLogin()">🔐 Admin</button>
+      <div class="logo">⚽ <span>Campus League</span></div>
+    </div>
+    <div class="header-right">
+      <div class="avatar-sm" id="headerAvatar" onclick="go('profile')">U</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <h1>Welcome, <span id="homeUserName">Player</span> 👋</h1>
+        <p>Apne college ki izzat ke liye khelo. Jeeto, kamao, aur champion bano.</p>
+      </div>
+
+      <div class="section-title"><h2>🔥 Active Tournaments</h2></div>
+      <div id="homeTournaments"></div>
+
+      <div class="section-title"><h2>📢 Announcements</h2></div>
+      <div id="homeAnnouncements"></div>
+    </div>
+
+    <div class="page" id="page-tournaments">
+      <h2 style="font-size:20px; font-weight:800; margin-bottom:4px;">Tournaments</h2>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Join karo, khelo, jeeto 💰</p>
+      <div id="allTournaments"></div>
+    </div>
+
+    <div class="page" id="page-matches">
+      <h2 style="font-size:20px; font-weight:800; margin-bottom:4px;">My Registrations</h2>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Tumhare registered tournaments</p>
+      <div id="myRegistrations"></div>
+    </div>
+
+    <div class="page" id="page-efhub">
+      <div class="efhub-wrap">
+        <div class="efhub-bar">
+          <div class="efhub-title">🎮 <span>EF HUB</span></div>
+          <button class="btn btn-outline btn-sm" onclick="openEfhubExternal()">🌐 Open in Browser</button>
+        </div>
+        <iframe
+          id="efhubFrame"
+          class="efhub-frame"
+          src="https://efhub.com/"
+          allow="fullscreen; clipboard-read; clipboard-write"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
+          referrerpolicy="no-referrer"
+        ></iframe>
+        <div class="efhub-fallback" id="efhubFallback">
+          <div class="ico">🎮</div>
+          <h3>EF HUB</h3>
+          <p>Ye website iframe mein load nahi ho sakti (security restrictions).<br>Browser mein kholne ke liye neeche button dabao.</p>
+          <button class="btn btn-primary" style="max-width:280px;" onclick="openEfhubExternal()">🌐 Open efhub.com</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-profile">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">U</div>
+        <div class="profile-name" id="profileName">Player</div>
+        <div class="profile-college" id="profileCollege">—</div>
+      </div>
+
+      <div class="section-title"><h2>👤 My Info</h2></div>
+      <div id="profileInfo"></div>
+
+      <div class="section-title"><h2>⚙️ Settings</h2></div>
+      <div class="t-card" onclick="editProfile()"><div class="t-head"><div class="t-name">✏️ Edit Profile</div><div style="color:var(--muted)">→</div></div></div>
+      <div class="t-card" onclick="logout()"><div class="t-head"><div class="t-name" style="color:#fca5a5;">🚪 Logout</div><div style="color:var(--muted)">→</div></div></div>
+      <div class="t-card" onclick="showToast('Campus League eFootball v1.1 — Made with 💙 in Swat')"><div class="t-head"><div class="t-name">ℹ️ About</div><div style="color:var(--muted)">→</div></div></div>
+    </div>
+  </main>
+
+  <nav class="bottom">
+    <div class="nav-item active" onclick="go('home',this)"><span class="ico">🏠</span><span class="lbl">Home</span></div>
+    <div class="nav-item" onclick="go('tournaments',this)"><span class="ico">🎮</span><span class="lbl">Play</span></div>
+    <div class="nav-item" onclick="go('matches',this)"><span class="ico">📋</span><span class="lbl">My</span></div>
+    <div class="nav-item" onclick="go('efhub',this)"><span class="ico">🎯</span><span class="lbl">EF Hub</span></div>
+    <div class="nav-item" onclick="go('profile',this)"><span class="ico">👤</span><span class="lbl">Profile</span></div>
+  </nav>
+</div>
+
+<div id="adminScreen">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">🔐 <span>Admin Panel</span></div>
+      <div style="font-size:10px; color:var(--muted); margin-top:2px;">Campus League eFootball</div>
+    </div>
+    <div class="admin-header-actions">
+      <button class="member-switch-btn" onclick="switchToMember()">👤 Member</button>
+      <button class="btn btn-outline btn-sm" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="admin-nav">
+    <div class="admin-tab active" onclick="adminGo('dash',this)">📊 Dashboard</div>
+    <div class="admin-tab" onclick="adminGo('tournaments',this)">🏆 Tournaments</div>
+    <div class="admin-tab" onclick="adminGo('members',this)">👥 Members</div>
+    <div class="admin-tab" onclick="adminGo('registrations',this)">📋 Registrations</div>
+    <div class="admin-tab" onclick="adminGo('announce',this)">📢 Announce</div>
+  </div>
+
+  <div class="admin-page active" id="admin-dash">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val" id="statUsers">0</div><div class="stat-lbl">Total Players</div></div>
+      <div class="stat-card"><div class="stat-val" id="statTournaments">0</div><div class="stat-lbl">Tournaments</div></div>
+      <div class="stat-card"><div class="stat-val" id="statPending">0</div><div class="stat-lbl">Pending</div></div>
+      <div class="stat-card"><div class="stat-val" id="statLive">0</div><div class="stat-lbl">Live Events</div></div>
+    </div>
+    <div class="section-title"><h2>⏳ Pending Verifications</h2></div>
+    <div id="recentRegs"></div>
+  </div>
+
+  <div class="admin-page" id="admin-tournaments">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-size:16px; font-weight:700;">Manage Tournaments</h2>
+      <button class="btn btn-primary btn-sm" onclick="openCreateTournament()">+ Create</button>
+    </div>
+    <div id="adminTournamentList"></div>
+  </div>
+
+  <div class="admin-page" id="admin-members">
+    <h2 style="font-size:16px; font-weight:700; margin-bottom:14px;">Registered Members</h2>
+    <div class="search-bar">
+      <input type="text" id="memberSearch" placeholder="Search by name, CNIC, college..." oninput="renderMembers()">
+    </div>
+    <div id="membersList"></div>
+  </div>
+
+  <div class="admin-page" id="admin-registrations">
+    <h2 style="font-size:16px; font-weight:700; margin-bottom:14px;">All Registrations</h2>
+    <div style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="filterRegs('all',this)" id="regFilterAll" style="background:linear-gradient(135deg,var(--neon),var(--pink));border-color:transparent;">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRegs('pending',this)">⏳ Pending</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRegs('approved',this)">✅ Approved</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRegs('denied',this)">❌ Denied</button>
+    </div>
+    <div id="adminRegsList"></div>
+  </div>
+
+  <div class="admin-page" id="admin-announce">
+    <h2 style="font-size:16px; font-weight:700; margin-bottom:14px;">Broadcast Announcement</h2>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" id="annTitle" placeholder="e.g. New Tournament Announced!">
+    </div>
+    <div class="form-group">
+      <label>Message</label>
+      <textarea id="annMessage" rows="4" placeholder="Type your announcement..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="sendAnnouncement()">📢 Broadcast</button>
+    <div class="divider"></div>
+    <h3 style="font-size:14px; font-weight:700; margin-bottom:12px;">Previous Announcements</h3>
+    <div id="adminAnnList"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="modal-handle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ============ SUPPRESS SANDBOX STORAGE ERRORS ============
+(function() {
+  const origError = console.error;
+  console.error = function(...args) {
+    const msg = args.join(' ');
+    if (msg.includes('localStorage') || msg.includes('sessionStorage') || msg.includes('sandboxed')) return;
+    origError.apply(console, args);
+  };
+  window.addEventListener('error', (e) => {
+    if (e.message && (e.message.includes('localStorage') || e.message.includes('sessionStorage') || e.message.includes('sandboxed'))) {
+      e.preventDefault(); return true;
+    }
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    const msg = String(e.reason || '');
+    if (msg.includes('localStorage') || msg.includes('sessionStorage') || msg.includes('sandboxed')) {
+      e.preventDefault(); return;
+    }
+  });
+})();
+
+function isStorageAvailable(type) {
+  try {
+    const storage = window[type];
+    const test = '__storage_test__';
+    storage.setItem(test, test);
+    storage.removeItem(test);
+    return true;
+  } catch(e) { return false; }
+}
+const LOCAL_OK = isStorageAvailable('localStorage');
+const SESSION_OK = isStorageAvailable('sessionStorage');
+console.log('📦 Storage:', { localStorage: LOCAL_OK, sessionStorage: SESSION_OK });
+window._CL_STORAGE = { LOCAL_OK, SESSION_OK };
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs,
+  updateDoc, deleteDoc, query, where, orderBy, onSnapshot,
+  serverTimestamp, limit
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ============ FIREBASE CONFIG ============
+const firebaseConfig = {
+  apiKey: "AIzaSyDGKq2mUP5tPHdeXAbFaWWe0ERf5nu4vT0",
+  authDomain: "campus-league-efootball.firebaseapp.com",
+  projectId: "campus-league-efootball",
+  storageBucket: "campus-league-efootball.firebasestorage.app",
+  messagingSenderId: "872190229218",
+  appId: "1:872190229218:web:59d0f066320c9cb52a7cbb",
+  measurementId: "G-WHMWWY9Q8G"
+};
+
+// ============ ADMIN CREDENTIALS (HARDCODED) ============
+const ADMIN_CNIC = "15604-0398770-5";
+const ADMIN_PASSWORD = "Sallu2009";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ============ PERSISTENCE ============
+(async () => {
+  const storageInfo = window._CL_STORAGE || { LOCAL_OK: false };
+  try {
+    if (storageInfo.LOCAL_OK) {
+      await setPersistence(auth, browserLocalPersistence);
+      console.log('✅ Persistence: browserLocalPersistence');
+    } else {
+      await setPersistence(auth, inMemoryPersistence);
+      console.log('⚠️ Persistence: inMemoryPersistence (sandbox)');
+    }
+  } catch(e) {
+    try { await setPersistence(auth, inMemoryPersistence); } catch(e2) {}
+  }
+})();
+
+// ============ STATE ============
+let currentUser = null;
+let currentProfile = null;
+let adminUser = null;
+let allUsers = [];
+let allTournaments = [];
+let allRegistrations = [];
+let allAnnouncements = [];
+let selectedPicBase64 = null;
+let selectedScreenshotBase64 = null;
+let appLoaded = false;
+let adminSubscribed = false;
+let currentRegFilter = 'all';
+
+// ============ HELPERS ============
+function cnicToEmail(cnic) { return cnic.replace(/-/g, '') + '@campusleague.local'; }
+function validateCNIC(c) { return /^\d{5}-\d{7}-\d$/.test(c); }
+function validatePhone(p) {
+  p = p.replace(/[-\s]/g, '');
+  return /^(\+92|0|92)?3\d{9}$/.test(p);
+}
+function normalizePhone(p) {
+  p = p.replace(/[-\s]/g, '');
+  if (p.startsWith('0')) return '+92' + p.slice(1);
+  if (p.startsWith('+92')) return p;
+  if (p.startsWith('92')) return '+' + p;
+  return p;
+}
+function fmtCnic(v) {
+  let d = v.replace(/\D/g, '').slice(0, 13);
+  if (d.length <= 5) return d;
+  if (d.length <= 12) return d.slice(0,5) + '-' + d.slice(5);
+  return d.slice(0,5) + '-' + d.slice(5,12) + '-' + d.slice(12);
+}
+window.fmtCnic = fmtCnic;
+
+function fileToBase64(file, maxSize = 400, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function showToast(msg, isError = false) {
+  if (msg && (msg.includes('localStorage') || msg.includes('sandboxed'))) {
+    msg = '⚠️ Preview mode: session save nahi hoga. Real browser mein test karo.';
+  }
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = isError ? 'show error' : 'show';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.className = '', 2800);
+}
+window.showToast = showToast;
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+window.escapeHtml = escapeHtml;
+
+// ============ SPLASH ============
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('splash').classList.add('hide'), 1500);
+});
+
+document.getElementById('signupCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
+document.getElementById('loginCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
+
+// ============ AUTH TABS ============
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+}
+window.switchAuthTab = switchAuthTab;
+
+// ============ PIC SELECT ============
+async function handlePicSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('❌ Image 2MB se choti honi chahiye', true); return; }
+  try {
+    selectedPicBase64 = await fileToBase64(file, 400, 0.75);
+    document.getElementById('picPreview').innerHTML = `<img src="${selectedPicBase64}">`;
+  } catch(err) { showToast('❌ Image load nahi ho saki', true); }
+}
+window.handlePicSelect = handlePicSelect;
+
+// ============ GEOLOCATION ============
+function getLocation() {
+  if (!navigator.geolocation) { showToast('❌ Location not supported', true); return; }
+  showToast('📍 Getting location...');
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        const data = await res.json();
+        const addr = data.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+        document.getElementById('signupLocation').value = addr;
+        showToast('✅ Location set!');
+      } catch {
+        document.getElementById('signupLocation').value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      }
+    },
+    (err) => showToast('❌ Location permission denied', true),
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+window.getLocation = getLocation;
+
+// ============ SIGNUP ============
+async function doSignup() {
+  const btn = document.getElementById('signupBtn');
+  const name = document.getElementById('signupName').value.trim();
+  const cnic = document.getElementById('signupCnic').value.trim();
+  const phone = document.getElementById('signupPhone').value.trim();
+  const college = document.getElementById('signupCollege').value.trim();
+  const location = document.getElementById('signupLocation').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const twitch = document.getElementById('signupTwitch').value.trim();
+
+  document.querySelectorAll('.form-err').forEach(e => e.classList.remove('show'));
+
+  if (!name) { showToast('❌ Name required', true); return; }
+  if (!validateCNIC(cnic)) { document.getElementById('errCnic').classList.add('show'); return; }
+  if (!validatePhone(phone)) { document.getElementById('errPhone').classList.add('show'); return; }
+  if (!college) { showToast('❌ College required', true); return; }
+  if (!location) { showToast('❌ Location required', true); return; }
+  if (password.length < 6) { document.getElementById('errPassword').classList.add('show'); return; }
+  if (!selectedPicBase64) { showToast('❌ Profile picture required', true); return; }
+
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  try {
+    const email = cnicToEmail(cnic);
+    const existing = await getDocs(query(collection(db, 'users'), where('cnic', '==', cnic)));
+    if (!existing.empty) throw new Error('This CNIC is already registered');
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, 'users', userCred.user.uid), {
+      uid: userCred.user.uid, name, cnic,
+      phone: normalizePhone(phone),
+      college, location,
+      twitchId: twitch || '',
+      profilePic: selectedPicBase64,
+      isAdmin: false, isBanned: false,
+      createdAt: serverTimestamp()
+    });
+    showToast('✅ Account created!');
+  } catch (err) {
+    console.error(err);
+    let msg = err.message || 'Signup failed';
+    if (msg.includes('email-already-in-use')) msg = 'This CNIC is already registered';
+    if (msg.includes('weak-password')) msg = 'Password too weak';
+    showToast('❌ ' + msg, true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }
+}
+window.doSignup = doSignup;
+
+// ============ LOGIN ============
+async function doLogin() {
+  const btn = document.getElementById('loginBtn');
+  const cnic = document.getElementById('loginCnic').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!validateCNIC(cnic)) { showToast('❌ Invalid CNIC format', true); return; }
+  if (!password) { showToast('❌ Password required', true); return; }
+
+  btn.disabled = true; btn.textContent = 'Logging in...';
+  try {
+    const email = cnicToEmail(cnic);
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const profileDoc = await getDoc(doc(db, 'users', cred.user.uid));
+    if (!profileDoc.exists()) throw new Error('Profile not found');
+    const profile = profileDoc.data();
+    if (profile.isBanned) {
+      await signOut(auth);
+      throw new Error('Your account has been banned');
+    }
+    showToast('✅ Welcome back, ' + profile.name.split(' ')[0]);
+  } catch (err) {
+    console.error(err);
+    let msg = err.message || 'Login failed';
+    if (msg.includes('invalid-credential') || msg.includes('wrong-password') || msg.includes('user-not-found')) {
+      msg = 'Invalid CNIC or password';
+    }
+    showToast('❌ ' + msg, true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Login';
+  }
+}
+window.doLogin = doLogin;
+
+// ============ AUTH STATE ============
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const profileDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!profileDoc.exists()) return;
+    currentUser = user;
+    currentProfile = { uid: user.uid, ...profileDoc.data() };
+    if (currentProfile.isBanned) {
+      await signOut(auth);
+      showToast('❌ Your account has been banned', true);
+      return;
+    }
+    if (!adminUser) {
+      document.getElementById('authScreen').classList.remove('active');
+      document.getElementById('adminScreen').classList.remove('active');
+      document.getElementById('appScreen').style.display = 'block';
+      loadApp();
+    }
+  } else {
+    currentUser = null; currentProfile = null; appLoaded = false;
+    if (!adminUser) {
+      document.getElementById('appScreen').style.display = 'none';
+      document.getElementById('adminScreen').classList.remove('active');
+      document.getElementById('authScreen').classList.add('active');
+    }
+  }
+});
+
+async function logout() {
+  await signOut(auth);
+  currentUser = null; currentProfile = null; appLoaded = false;
+  location.reload();
+}
+window.logout = logout;
+
+// ============ LOAD APP ============
+function loadApp() {
+  if (appLoaded) return;
+  appLoaded = true;
+  renderUserHeader();
+  subscribeTournaments();
+  subscribeAnnouncements();
+  subscribeMyRegistrations();
+  renderProfilePage();
+}
+
+function renderUserHeader() {
+  const u = currentProfile;
+  if (!u) return;
+  document.getElementById('homeUserName').textContent = u.name.split(' ')[0];
+  document.getElementById('headerAvatar').innerHTML = u.profilePic ? `<img src="${u.profilePic}">` : u.name.charAt(0).toUpperCase();
+}
+
+function subscribeTournaments() {
+  const q = query(collection(db, 'tournaments'), orderBy('createdAt', 'desc'));
+  onSnapshot(q, (snap) => {
+    allTournaments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderHomeTournaments();
+    renderAllTournaments();
+    renderMyRegistrations();
+    if (document.getElementById('admin-tournaments').classList.contains('active')) renderAdminTournaments();
+  }, (err) => console.error('Tournaments sub error:', err));
+}
+
+function subscribeAnnouncements() {
+  const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20));
+  onSnapshot(q, (snap) => {
+    allAnnouncements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderHomeAnnouncements();
+    if (document.getElementById('admin-announce').classList.contains('active')) renderAdminAnnouncements();
+  }, (err) => console.error('Ann error:', err));
+}
+
+function subscribeMyRegistrations() {
+  if (!currentUser) return;
+  const q = query(collection(db, 'registrations'), where('userId', '==', currentUser.uid));
+  onSnapshot(q, (snap) => {
+    const regs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMyRegistrations(regs);
+  }, (err) => console.error('Reg error:', err));
+}
+
+function renderHomeTournaments() {
+  const el = document.getElementById('homeTournaments');
+  const active = allTournaments.filter(t => t.status === 'open' || t.status === 'live').slice(0, 3);
+  if (active.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>Koi active tournament nahi</p></div>`;
+    return;
+  }
+  el.innerHTML = active.map(t => tournamentCardHTML(t)).join('');
+}
+
+function renderAllTournaments() {
+  const el = document.getElementById('allTournaments');
+  if (allTournaments.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>Abhi koi tournament nahi hai</p></div>`;
+    return;
+  }
+  el.innerHTML = allTournaments.map(t => tournamentCardHTML(t)).join('');
+}
+
+function tournamentCardHTML(t) {
+  const statusLabels = { live:'🔴 Live', open:'✅ Open', upcoming:'⏳ Soon', completed:'🏁 Done', cancelled:'❌ Cancelled' };
+  const statusLabel = statusLabels[t.status] || t.status;
+  const joined = t.joined || 0;
+  const slots = t.maxSlots || 0;
+  const pct = slots > 0 ? Math.min(100, Math.round((joined / slots) * 100)) : 0;
+  const startDate = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', { dateStyle:'medium', timeStyle:'short' }) : 'TBA';
+  const isFree = (t.entryFee || 0) === 0;
+
+  return `
+    <div class="t-card" onclick="openTournament('${t.id}')">
+      <div class="t-head">
+        <div>
+          <div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${startDate}</div>
+        </div>
+        <div class="t-status ${t.status}">${statusLabel}</div>
+      </div>
+      <div class="t-meta">
+        <span>🏆 <span class="t-prize">Rs ${(t.prizePool||0).toLocaleString()}</span></span>
+        <span>💵 Entry: ${isFree ? 'FREE' : 'Rs ' + t.entryFee}</span>
+        <span>👥 ${joined}/${slots}</span>
+      </div>
+      <div style="margin-top:10px; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden;">
+        <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,var(--neon),var(--neon2)); border-radius:2px;"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHomeAnnouncements() {
+  const el = document.getElementById('homeAnnouncements');
+  if (allAnnouncements.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="ico">📢</div><p>No announcements yet</p></div>`;
+    return;
+  }
+  el.innerHTML = allAnnouncements.slice(0, 3).map(a => `
+    <div class="t-card" style="cursor:default;">
+      <div class="t-head"><div class="t-name">📢 ${escapeHtml(a.title)}</div></div>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5;">${escapeHtml(a.message)}</div>
+      <div style="font-size:10px; color:var(--muted); margin-top:8px;">${a.createdAt ? new Date(a.createdAt.toDate()).toLocaleString() : ''}</div>
+    </div>
+  `).join('');
+}
+
+function renderMyRegistrations(regs) {
+  const el = document.getElementById('myRegistrations');
+  if (!regs || regs.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="ico">📋</div><p>Tumne abhi koi tournament join nahi kiya</p></div>`;
+    return;
+  }
+  const statusLabel = { pending:'⏳ Pending', approved:'✅ Approved', denied:'❌ Denied' };
+  el.innerHTML = regs.map(r => {
+    const t = allTournaments.find(x => x.id === r.tournamentId);
+    if (!t) return '';
+    const st = r.status || 'approved';
+    return `
+      <div class="t-card" style="cursor:default;">
+        <div class="t-head">
+          <div>
+            <div class="t-name">⚽ ${escapeHtml(t.name)}</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;">Game ID: ${escapeHtml(r.gameId || '—')}</div>
+          </div>
+          <div class="t-status ${st}">${statusLabel[st] || st}</div>
+        </div>
+        <div class="t-meta">
+          <span>📅 ${t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'medium', timeStyle:'short'}) : 'TBA'}</span>
+          ${r.amount ? `<span>💵 Rs ${r.amount}</span>` : '<span>🎁 Free</span>'}
+        </div>
+        ${st === 'pending' ? '<div style="font-size:11px; color:#fcd34d; margin-top:8px;">⏳ Payment verification pending — admin approve karega toh confirm ho jayegi</div>' : ''}
+        ${st === 'denied' ? '<div style="font-size:11px; color:#fca5a5; margin-top:8px;">❌ Registration denied — admin se contact karo</div>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ OPEN TOURNAMENT ============
+async function openTournament(id) {
+  const t = allTournaments.find(x => x.id === id);
+  if (!t) return;
+
+  const regQuery = await getDocs(query(
+    collection(db, 'registrations'),
+    where('tournamentId', '==', id),
+    where('userId', '==', currentUser.uid)
+  ));
+  const existingReg = regQuery.empty ? null : { id: regQuery.docs[0].id, ...regQuery.docs[0].data() };
+
+  const startDate = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'medium', timeStyle:'short'}) : 'TBA';
+  const slotsLeft = (t.maxSlots || 0) - (t.joined || 0);
+  const isFree = (t.entryFee || 0) === 0;
+  selectedScreenshotBase64 = null;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">⚽ ${escapeHtml(t.name)}</div>
+    <div class="modal-sub">${t.format || 'Knockout'} • ${startDate}</div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
+      <div class="stat-card"><div class="stat-val">Rs ${(t.prizePool||0).toLocaleString()}</div><div class="stat-lbl">Prize</div></div>
+      <div class="stat-card"><div class="stat-val">${isFree ? 'FREE' : 'Rs ' + t.entryFee}</div><div class="stat-lbl">Entry</div></div>
+      <div class="stat-card"><div class="stat-val">${slotsLeft}</div><div class="stat-lbl">Slots Left</div></div>
+    </div>
+
+    ${t.description ? `<div style="font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.5;">${escapeHtml(t.description)}</div>` : ''}
+
+    ${!currentProfile.twitchId ? `<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:10px; font-size:12px; color:#fca5a5; margin-bottom:14px;">⚠️ Twitch ID add karo profile mein — tournament participation ke liye zaroori hai</div>` : ''}
+
+    ${t.status === 'completed' ? `<div style="text-align:center; padding:20px; color:var(--muted);">🏁 Tournament completed</div>` : ''}
+    ${t.status === 'cancelled' ? `<div style="text-align:center; padding:20px; color:#fca5a5;">❌ Tournament cancelled</div>` : ''}
+
+    ${existingReg ? `
+      <div style="text-align:center; padding:16px; background:${existingReg.status === 'pending' ? 'rgba(251,191,36,0.1)' : existingReg.status === 'denied' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)'}; border:1px solid ${existingReg.status === 'pending' ? 'rgba(251,191,36,0.3)' : existingReg.status === 'denied' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}; border-radius:12px; color:${existingReg.status === 'pending' ? '#fcd34d' : existingReg.status === 'denied' ? '#fca5a5' : '#6ee7b7'}; font-weight:600;">
+        ${existingReg.status === 'pending' ? '⏳ Payment verification pending' : existingReg.status === 'denied' ? '❌ Registration denied' : '✅ You are registered'}
+      </div>
+      <button class="btn btn-danger" style="margin-top:12px;" onclick="unregisterTournament('${t.id}')">Cancel Registration</button>
+    ` : (t.status === 'open' && slotsLeft > 0 && currentProfile.twitchId) ? `
+      <div class="form-group">
+        <label>Your eFootball In-Game ID</label>
+        <input type="text" id="regGameId" placeholder="e.g. ProGamer_123">
+      </div>
+
+      ${isFree ? `
+        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:10px; font-size:12px; color:#6ee7b7; margin-bottom:14px;">🎁 Ye tournament FREE hai — koi payment screenshot zaroori nahi</div>
+      ` : `
+        <div class="form-group">
+          <label>Payment Screenshot <span class="req">*</span></label>
+          <div class="screenshot-upload" onclick="document.getElementById('screenshotInput').click()">
+            <div class="screenshot-preview" id="screenshotPreview">📷</div>
+            <div style="flex:1;">
+              <div style="font-size:13px; font-weight:700; margin-bottom:2px;">Upload payment screenshot</div>
+              <div style="font-size:11px; color:var(--muted);">Rs ${t.entryFee} ka payment karke screenshot upload karo</div>
+            </div>
+          </div>
+          <input type="file" id="screenshotInput" accept="image/*" style="display:none;" onchange="handleScreenshotSelect(event)">
+          <div style="font-size:11px; color:#fcd34d; margin-top:8px;">💳 Payment karo: JazzCash/Easypaisa 03XX-XXXXXXX (ya jo bhi admin ne set kiya ho) aur screenshot upload karo</div>
+        </div>
+      `}
+
+      <button class="btn btn-primary" onclick="registerTournament('${t.id}', ${isFree}, ${t.entryFee || 0})">
+        ${isFree ? '🚀 Register Now (FREE)' : '🚀 Submit for Verification — Rs ' + t.entryFee}
+      </button>
+    ` : (t.status === 'open' && slotsLeft <= 0) ? `
+      <div style="text-align:center; padding:16px; color:#fcd34d;">⚠️ Slots full</div>
+    ` : ''}
+
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.openTournament = openTournament;
+
+// ============ SCREENSHOT SELECT ============
+async function handleScreenshotSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 3 * 1024 * 1024) { showToast('❌ Screenshot 3MB se chota hona chahiye', true); return; }
+  try {
+    selectedScreenshotBase64 = await fileToBase64(file, 500, 0.7);
+    document.getElementById('screenshotPreview').innerHTML = `<img src="${selectedScreenshotBase64}">`;
+  } catch(err) { showToast('❌ Screenshot load nahi ho saki', true); }
+}
+window.handleScreenshotSelect = handleScreenshotSelect;
+
+// ============ REGISTER TOURNAMENT ============
+async function registerTournament(id, isFree, amount) {
+  const gameId = document.getElementById('regGameId').value.trim();
+  if (!gameId) { showToast('❌ Game ID required', true); return; }
+
+  if (!isFree && !selectedScreenshotBase64) {
+    showToast('❌ Payment screenshot upload karo', true);
+    return;
+  }
+
+  const status = isFree ? 'approved' : 'pending';
+  const t = allTournaments.find(x => x.id === id);
+
+  try {
+    await addDoc(collection(db, 'registrations'), {
+      tournamentId: id,
+      tournamentName: t.name,
+      userId: currentUser.uid,
+      name: currentProfile.name,
+      cnic: currentProfile.cnic,
+      college: currentProfile.college,
+      phone: currentProfile.phone,
+      twitchId: currentProfile.twitchId,
+      gameId,
+      amount: amount,
+      isFree: isFree,
+      paymentScreenshot: isFree ? null : selectedScreenshotBase64,
+      status: status,
+      registeredAt: serverTimestamp(),
+      verifiedAt: isFree ? serverTimestamp() : null
+    });
+
+    // Only increment joined if approved (free) — for paid, increment after admin verify
+    if (isFree) {
+      await updateDoc(doc(db, 'tournaments', id), { joined: (t.joined || 0) + 1 });
+    }
+
+    closeModal();
+
+    if (isFree) {
+      showToast('✅ Registration confirmed!');
+    } else {
+      showPaymentPendingPopup();
+    }
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Registration failed', true);
+  }
+}
+window.registerTournament = registerTournament;
+
+// ============ PAYMENT PENDING POPUP ============
+function showPaymentPendingPopup() {
+  document.getElementById('modalBody').innerHTML = `
+    <div style="text-align:center; padding:20px 0;">
+      <div style="font-size:64px; margin-bottom:16px;">⏳</div>
+      <div class="modal-title" style="text-align:center;">Payment Verification Pending</div>
+      <div class="modal-sub" style="text-align:center; margin-top:8px;">
+        Tumhara payment screenshot admin ko bhej diya gaya hai.<br>
+        Admin verify karega toh notification milega.<br><br>
+        <strong style="color:var(--neon2);">Thoda wait karo — verify hone pe tum "My Registrations" mein dekh sakte ho.</strong>
+      </div>
+      <button class="btn btn-primary" style="margin-top:20px;" onclick="closeModal();go('matches',document.querySelectorAll('.nav-item')[2])">📋 View My Registrations</button>
+      <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">OK, Got it</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.showPaymentPendingPopup = showPaymentPendingPopup;
+
+async function unregisterTournament(tid) {
+  if (!confirm('Are you sure you want to cancel this registration?')) return;
+  try {
+    const q = await getDocs(query(
+      collection(db, 'registrations'),
+      where('tournamentId', '==', tid),
+      where('userId', '==', currentUser.uid)
+    ));
+    for (const d of q.docs) {
+      const data = d.data();
+      await deleteDoc(doc(db, 'registrations', d.id));
+      if (data.status === 'approved') {
+        const t = allTournaments.find(x => x.id === tid);
+        if (t) await updateDoc(doc(db, 'tournaments', tid), { joined: Math.max(0, (t.joined || 1) - 1) });
+      }
+    }
+    closeModal();
+    showToast('✅ Registration cancelled');
+  } catch(err) { showToast('❌ Failed', true); }
+}
+window.unregisterTournament = unregisterTournament;
+
+// ============ NAV ============
+function go(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Hide EF HUB frame when not on efhub page
+  if (page !== 'efhub') {
+    const f = document.getElementById('efhubFallback');
+    if (f) f.classList.remove('show');
+  }
+}
+window.go = go;
+
+// ============ EF HUB ============
+function openEfhubExternal() {
+  window.open('https://efhub.com/', '_blank', 'noopener,noreferrer');
+}
+window.openEfhubExternal = openEfhubExternal;
+
+// Detect iframe load failure (heuristic)
+window.addEventListener('load', () => {
+  const frame = document.getElementById('efhubFrame');
+  if (frame) {
+    frame.addEventListener('load', () => {
+      // Can't reliably detect X-Frame-Options denial cross-origin,
+      // but often the iframe stays blank. Show a hint after 4s if user stays.
+      setTimeout(() => {
+        try {
+          // If cross-origin blocked, accessing contentDocument throws
+          const doc = frame.contentDocument;
+          if (!doc) throw new Error('blocked');
+        } catch(e) {
+          // Show fallback button prominently
+          document.getElementById('efhubFallback')?.classList.add('show');
+        }
+      }, 2000);
+    });
+    frame.addEventListener('error', () => {
+      document.getElementById('efhubFallback')?.classList.add('show');
+    });
+  }
+});
+
+function renderProfilePage() {
+  const u = currentProfile;
+  if (!u) return;
+  document.getElementById('profileAvatar').innerHTML = u.profilePic ? `<img src="${u.profilePic}">` : u.name.charAt(0).toUpperCase();
+  document.getElementById('profileName').textContent = u.name;
+  document.getElementById('profileCollege').textContent = u.college;
+
+  document.getElementById('profileInfo').innerHTML = `
+    <div class="info-row"><span class="info-label">CNIC</span><span class="info-value">${escapeHtml(u.cnic)}</span></div>
+    <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${escapeHtml(u.phone)}</span></div>
+    <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college)}</span></div>
+    <div class="info-row"><span class="info-label">Location</span><span class="info-value">${escapeHtml(u.location)}</span></div>
+    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon2);">Link</a>` : 'Not set'}</span></div>
+  `;
+}
+
+function editProfile() {
+  const u = currentProfile;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">✏️ Edit Profile</div>
+    <div class="modal-sub">Apni info update karo</div>
+    <div class="form-group"><label>Profile Picture</label>
+      <div class="pic-upload">
+        <div class="pic-preview" id="editPicPreview" onclick="document.getElementById('editPicInput').click()">
+          ${u.profilePic ? `<img src="${u.profilePic}">` : '📷'}
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('editPicInput').click()">Change</button>
+      </div>
+      <input type="file" id="editPicInput" accept="image/*" style="display:none;" onchange="handleEditPic(event)">
+    </div>
+    <div class="form-group"><label>Name</label><input type="text" id="editName" value="${escapeHtml(u.name)}"></div>
+    <div class="form-group"><label>College</label><input type="text" id="editCollege" value="${escapeHtml(u.college)}"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="editLocation" value="${escapeHtml(u.location)}"></div>
+    <div class="form-group"><label>Twitch ID</label><input type="url" id="editTwitch" value="${escapeHtml(u.twitchId || '')}" placeholder="https://twitch.tv/yourname"></div>
+    <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+  `;
+  window._editPicBase64 = null;
+  document.getElementById('modal').classList.add('show');
+}
+window.editProfile = editProfile;
+
+async function handleEditPic(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('❌ Image 2MB se choti honi chahiye', true); return; }
+  const base64 = await fileToBase64(file, 400, 0.75);
+  window._editPicBase64 = base64;
+  document.getElementById('editPicPreview').innerHTML = `<img src="${base64}">`;
+}
+window.handleEditPic = handleEditPic;
+
+async function saveProfile() {
+  const name = document.getElementById('editName').value.trim();
+  const college = document.getElementById('editCollege').value.trim();
+  const location_ = document.getElementById('editLocation').value.trim();
+  const twitch = document.getElementById('editTwitch').value.trim();
+  if (!name || !college || !location_) { showToast('❌ All fields required', true); return; }
+  try {
+    const updates = { name, college, location: location_, twitchId: twitch };
+    if (window._editPicBase64) updates.profilePic = window._editPicBase64;
+    await updateDoc(doc(db, 'users', currentUser.uid), updates);
+    currentProfile = { ...currentProfile, ...updates };
+    closeModal();
+    renderProfilePage();
+    renderUserHeader();
+    showToast('✅ Profile updated');
+  } catch(err) { showToast('❌ Update failed', true); }
+}
+window.saveProfile = saveProfile;
+
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+window.closeModal = closeModal;
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+/* ==================================================
+   ADMIN PANEL
+   ================================================== */
+
+function showAdminLogin() {
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">🔐 Admin Login</div>
+    <div class="modal-sub">Enter admin CNIC & password</div>
+    <div class="form-group"><label>Admin CNIC</label><input type="text" id="adminCnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="adminPassword" placeholder="Admin password"></div>
+    <button class="btn btn-primary" onclick="doAdminLogin()">Login as Admin</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+    <div class="form-hint" style="margin-top:12px; text-align:center;">Sirf authorized admins ke liye</div>
+  `;
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('adminCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
+}
+window.showAdminLogin = showAdminLogin;
+
+function doAdminLogin() {
+  const cnic = document.getElementById('adminCnic').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  if (!cnic || !password) { showToast('❌ CNIC and password required', true); return; }
+  if (cnic !== ADMIN_CNIC || password !== ADMIN_PASSWORD) { showToast('❌ Invalid admin credentials', true); return; }
+  adminUser = { cnic: ADMIN_CNIC };
+  closeModal();
+  document.getElementById('authScreen').classList.remove('active');
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('adminScreen').classList.add('active');
+  loadAdminData();
+  showToast('✅ Welcome Admin');
+}
+window.doAdminLogin = doAdminLogin;
+
+function adminLogout() {
+  adminUser = null;
+  document.getElementById('adminScreen').classList.remove('active');
+  if (currentUser && currentProfile) {
+    document.getElementById('appScreen').style.display = 'block';
+    loadApp();
+  } else {
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('authScreen').classList.add('active');
+  }
+}
+window.adminLogout = adminLogout;
+
+function switchToMember() { adminLogout(); showToast('👤 Member view'); }
+window.switchToMember = switchToMember;
+
+function adminGo(page, el) {
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('admin-' + page)?.classList.add('active');
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  if (page === 'dash') loadAdminData();
+  if (page === 'tournaments') renderAdminTournaments();
+  if (page === 'members') renderMembers();
+  if (page === 'registrations') renderAdminRegistrations();
+  if (page === 'announce') renderAdminAnnouncements();
+}
+window.adminGo = adminGo;
+
+async function loadAdminData() {
+  if (adminSubscribed) return;
+  adminSubscribed = true;
+
+  onSnapshot(collection(db, 'users'), (snap) => {
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('statUsers').textContent = allUsers.length;
+    if (document.getElementById('admin-members').classList.contains('active')) renderMembers();
+  });
+
+  onSnapshot(collection(db, 'tournaments'), (snap) => {
+    allTournaments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('statTournaments').textContent = allTournaments.length;
+    document.getElementById('statLive').textContent = allTournaments.filter(t => t.status === 'live').length;
+    if (document.getElementById('admin-tournaments').classList.contains('active')) renderAdminTournaments();
+  });
+
+  onSnapshot(collection(db, 'registrations'), (snap) => {
+    allRegistrations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('statPending').textContent = allRegistrations.filter(r => r.status === 'pending').length;
+    renderRecentRegs();
+    if (document.getElementById('admin-registrations').classList.contains('active')) renderAdminRegistrations();
+  });
+
+  onSnapshot(query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20)), (snap) => {
+    allAnnouncements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (document.getElementById('admin-announce').classList.contains('active')) renderAdminAnnouncements();
+  });
+}
+
+function renderRecentRegs() {
+  const el = document.getElementById('recentRegs');
+  const pending = allRegistrations.filter(r => r.status === 'pending').slice(0, 8);
+  if (pending.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">✅</div><p>Koi pending verification nahi</p></div>`; return; }
+  el.innerHTML = pending.map(r => regCardHTML(r, true)).join('');
+}
+
+// ============ REGISTRATION CARD ============
+function regCardHTML(r, isRecent) {
+  const t = allTournaments.find(x => x.id === r.tournamentId);
+  const st = r.status || 'approved';
+  const stLabel = { pending:'⏳ Pending', approved:'✅ Approved', denied:'❌ Denied' }[st];
+  return `
+    <div class="reg-card">
+      ${r.paymentScreenshot ? `
+        <div class="reg-screenshot" onclick="viewScreenshot('${r.id}')">
+          <img src="${r.paymentScreenshot}">
+        </div>
+      ` : `
+        <div class="reg-screenshot" style="font-size:11px; text-align:center; color:var(--muted);">
+          ${r.isFree ? '🎁<br>FREE' : '—'}
+        </div>
+      `}
+      <div class="reg-details">
+        <div class="reg-name">${escapeHtml(r.name || '—')} <span class="badge ${st}">${stLabel}</span></div>
+        <div class="reg-meta">${escapeHtml(r.cnic || '')} • ${escapeHtml(t?.name || 'Unknown')}</div>
+        <div class="reg-meta">Game ID: ${escapeHtml(r.gameId || '—')} ${r.amount ? '• Rs ' + r.amount : ''}</div>
+        ${!isRecent && st === 'pending' ? `
+          <div class="reg-actions">
+            <button class="btn btn-success btn-sm" onclick="promptVerify('${r.id}','approve')">✅ Verify</button>
+            <button class="btn btn-danger btn-sm" onclick="promptVerify('${r.id}','deny')">❌ Deny</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+window.regCardHTML = regCardHTML;
+
+function viewScreenshot(rid) {
+  const r = allRegistrations.find(x => x.id === rid);
+  if (!r || !r.paymentScreenshot) return;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">💳 Payment Screenshot</div>
+    <div class="modal-sub">${escapeHtml(r.name)} • ${escapeHtml(r.cnic)} • Rs ${r.amount}</div>
+    <div style="border-radius:12px; overflow:hidden; border:1px solid var(--border); max-height:60vh; display:flex; align-items:center; justify-content:center; background:#000;">
+      <img src="${r.paymentScreenshot}" style="max-width:100%; max-height:60vh; object-fit:contain;">
+    </div>
+    <button class="btn btn-outline" style="margin-top:14px;" onclick="closeModal()">Close</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.viewScreenshot = viewScreenshot;
+
+// ============ VERIFY / DENY WITH PASSWORD ============
+function promptVerify(rid, action) {
+  const actionText = action === 'approve' ? 'Verify' : 'Deny';
+  const color = action === 'approve' ? 'var(--green)' : 'var(--red)';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">🔐 Confirm ${actionText}</div>
+    <div class="modal-sub">Password dalo: <strong>${actionText}</strong> karne ke liye</div>
+    <div class="form-group">
+      <label>Admin Password</label>
+      <input type="password" id="verifyPassword" placeholder="Enter admin password" autofocus>
+    </div>
+    <button class="btn ${action === 'approve' ? 'btn-success' : 'btn-danger'}" onclick="confirmVerify('${rid}','${action}')">${actionText === 'Verify' ? '✅' : '❌'} ${actionText} Registration</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('verifyPassword')?.focus();
+    document.getElementById('verifyPassword')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') confirmVerify(rid, action);
+    });
+  }, 100);
+}
+window.promptVerify = promptVerify;
+
+async function confirmVerify(rid, action) {
+  const pwd = document.getElementById('verifyPassword').value;
+  if (pwd !== ADMIN_PASSWORD) { showToast('❌ Wrong password', true); return; }
+
+  const r = allRegistrations.find(x => x.id === rid);
+  if (!r) { showToast('❌ Registration not found', true); return; }
+  const t = allTournaments.find(x => x.id === r.tournamentId);
+
+  try {
+    if (action === 'approve') {
+      await updateDoc(doc(db, 'registrations', rid), {
+        status: 'approved',
+        verifiedAt: serverTimestamp()
+      });
+      if (t) await updateDoc(doc(db, 'tournaments', t.id), { joined: (t.joined || 0) + 1 });
+      showToast('✅ Registration approved!');
+    } else {
+      // Deny: just mark as denied (don't delete so user can see in "My")
+      await updateDoc(doc(db, 'registrations', rid), {
+        status: 'denied',
+        deniedAt: serverTimestamp()
+      });
+      showToast('❌ Registration denied');
+    }
+    closeModal();
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Action failed', true);
+  }
+}
+window.confirmVerify = confirmVerify;
+
+function filterRegs(filter, el) {
+  currentRegFilter = filter;
+  document.querySelectorAll('#admin-registrations .btn-sm').forEach(b => {
+    b.style.background = '';
+    b.style.borderColor = '';
+  });
+  if (el) {
+    el.style.background = 'linear-gradient(135deg,var(--neon),var(--pink))';
+    el.style.borderColor = 'transparent';
+  }
+  renderAdminRegistrations();
+}
+window.filterRegs = filterRegs;
+
+function renderAdminRegistrations() {
+  const el = document.getElementById('adminRegsList');
+  let filtered = allRegistrations;
+  if (currentRegFilter !== 'all') filtered = allRegistrations.filter(r => (r.status || 'approved') === currentRegFilter);
+  if (filtered.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">📋</div><p>No registrations in this filter</p></div>`; return; }
+  el.innerHTML = filtered.map(r => regCardHTML(r, false)).join('');
+}
+window.renderAdminRegistrations = renderAdminRegistrations;
+
+async function adminRemoveReg(rid) {
+  if (!confirm('Permanently delete this registration?')) return;
+  try {
+    const r = allRegistrations.find(x => x.id === rid);
+    await deleteDoc(doc(db, 'registrations', rid));
+    if (r && r.status === 'approved') {
+      const t = allTournaments.find(x => x.id === r.tournamentId);
+      if (t) await updateDoc(doc(db, 'tournaments', t.id), { joined: Math.max(0, (t.joined||1) - 1) });
+    }
+    showToast('✅ Removed');
+  } catch(err) { showToast('❌ Failed', true); }
+}
+window.adminRemoveReg = adminRemoveReg;
+
+// ============ ADMIN TOURNAMENTS ============
+function renderAdminTournaments() {
+  const el = document.getElementById('adminTournamentList');
+  if (allTournaments.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>No tournaments</p></div>`; return; }
+  el.innerHTML = allTournaments.map(t => {
+    const isFree = (t.entryFee || 0) === 0;
+    return `
+    <div class="t-card">
+      <div class="t-head">
+        <div>
+          <div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'short', timeStyle:'short'}) : 'TBA'}</div>
+        </div>
+        <div class="t-status ${t.status}">${t.status}</div>
+      </div>
+      <div class="t-meta">
+        <span>🏆 Rs ${(t.prizePool||0).toLocaleString()}</span>
+        <span>💵 ${isFree ? 'FREE' : 'Rs ' + t.entryFee}</span>
+        <span>👥 ${t.joined||0}/${t.maxSlots||0}</span>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="editTournament('${t.id}')">✏️ Edit</button>
+        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','open')">✅ Open</button>
+        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','live')">🔴 Live</button>
+        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','completed')">🏁 Done</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTournament('${t.id}')">🗑️ Delete</button>
+      </div>
+    </div>
+  `}).join('');
+}
+
+function openCreateTournament() {
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">🏆 Create Tournament</div>
+    <div class="modal-sub">Naya eFootball tournament banao (free ya paid)</div>
+    <div class="form-group"><label>Tournament Name</label><input type="text" id="newTName" placeholder="e.g. Swat Championship S1"></div>
+    <div class="form-group"><label>Description</label><textarea id="newTDesc" rows="2" placeholder="Details..."></textarea></div>
+    <div class="form-group"><label>Format</label>
+      <select id="newTFormat">
+        <option value="Knockout">Knockout (1v1)</option>
+        <option value="League">League</option>
+        <option value="Group+Knockout">Group + Knockout</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Entry Fee (Rs) — 0 = FREE tournament</label><input type="number" id="newTEntry" value="50" min="0"></div>
+    <div class="form-group"><label>Prize Pool (Rs)</label><input type="number" id="newTPrize" value="3000"></div>
+    <div class="form-group"><label>Max Slots</label><input type="number" id="newTSlots" value="16"></div>
+    <div class="form-group"><label>Start Date & Time</label><input type="datetime-local" id="newTDate"></div>
+    <div class="form-group"><label>Status</label>
+      <select id="newTStatus">
+        <option value="open">Open</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="live">Live</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="createTournament()">Create Tournament</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.openCreateTournament = openCreateTournament;
+
+async function createTournament() {
+  const name = document.getElementById('newTName').value.trim();
+  const description = document.getElementById('newTDesc').value.trim();
+  const format = document.getElementById('newTFormat').value;
+  const entryFee = parseInt(document.getElementById('newTEntry').value) || 0;
+  const prizePool = parseInt(document.getElementById('newTPrize').value) || 0;
+  const maxSlots = parseInt(document.getElementById('newTSlots').value) || 16;
+  const startDate = document.getElementById('newTDate').value;
+  const status = document.getElementById('newTStatus').value;
+  if (!name) { showToast('❌ Name required', true); return; }
+  try {
+    await addDoc(collection(db, 'tournaments'), {
+      name, description, format, entryFee, prizePool, maxSlots,
+      startDate: startDate || null,
+      status, joined: 0, game: 'efootball',
+      createdAt: serverTimestamp()
+    });
+    closeModal();
+    showToast('✅ Tournament created' + (entryFee === 0 ? ' (FREE)' : ''));
+  } catch(err) { showToast('❌ Failed to create', true); }
+}
+window.createTournament = createTournament;
+
+async function editTournament(id) {
+  const t = allTournaments.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">✏️ Edit Tournament</div>
+    <div class="form-group"><label>Name</label><input type="text" id="etName" value="${escapeHtml(t.name)}"></div>
+    <div class="form-group"><label>Description</label><textarea id="etDesc" rows="2">${escapeHtml(t.description || '')}</textarea></div>
+    <div class="form-group"><label>Format</label>
+      <select id="etFormat">
+        ${['Knockout','League','Group+Knockout'].map(f => `<option ${f === t.format ? 'selected' : ''}>${f}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label>Entry Fee (Rs) — 0 = FREE</label><input type="number" id="etEntry" value="${t.entryFee||0}" min="0"></div>
+    <div class="form-group"><label>Prize Pool</label><input type="number" id="etPrize" value="${t.prizePool||0}"></div>
+    <div class="form-group"><label>Max Slots</label><input type="number" id="etSlots" value="${t.maxSlots||16}"></div>
+    <div class="form-group"><label>Status</label>
+      <select id="etStatus">
+        ${['open','upcoming','live','completed','cancelled'].map(s => `<option ${s === t.status ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveTournament('${id}')">Save Changes</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.editTournament = editTournament;
+
+async function saveTournament(id) {
+  const updates = {
+    name: document.getElementById('etName').value.trim(),
+    description: document.getElementById('etDesc').value.trim(),
+    format: document.getElementById('etFormat').value,
+    entryFee: parseInt(document.getElementById('etEntry').value) || 0,
+    prizePool: parseInt(document.getElementById('etPrize').value) || 0,
+    maxSlots: parseInt(document.getElementById('etSlots').value) || 16,
+    status: document.getElementById('etStatus').value
+  };
+  if (!updates.name) { showToast('❌ Name required', true); return; }
+  try {
+    await updateDoc(doc(db, 'tournaments', id), updates);
+    closeModal();
+    showToast('✅ Updated');
+  } catch(err) { showToast('❌ Failed', true); }
+}
+window.saveTournament = saveTournament;
+
+async function quickStatus(id, status) {
+  try { await updateDoc(doc(db, 'tournaments', id), { status }); showToast('✅ Status: ' + status); }
+  catch(err) { showToast('❌ Failed', true); }
+}
+window.quickStatus = quickStatus;
+
+async function deleteTournament(id) {
+  if (!confirm('Delete this tournament permanently?')) return;
+  try { await deleteDoc(doc(db, 'tournaments', id)); showToast('✅ Deleted'); }
+  catch(err) { showToast('❌ Failed', true); }
+}
+window.deleteTournament = deleteTournament;
+
+// ============ MEMBERS ============
+function renderMembers() {
+  const el = document.getElementById('membersList');
+  const search = (document.getElementById('memberSearch').value || '').toLowerCase();
+  let filtered = allUsers;
+  if (search) {
+    filtered = allUsers.filter(u =>
+      (u.name||'').toLowerCase().includes(search) ||
+      (u.cnic||'').includes(search) ||
+      (u.college||'').toLowerCase().includes(search) ||
+      (u.phone||'').includes(search)
+    );
+  }
+  if (filtered.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">👥</div><p>No members found</p></div>`; return; }
+  el.innerHTML = filtered.map(u => `
+    <div class="member-row">
+      <div class="member-pic">${u.profilePic ? `<img src="${u.profilePic}">` : (u.name||'U').charAt(0).toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">${escapeHtml(u.name||'—')} ${u.isBanned ? '<span class="badge banned">BANNED</span>' : ''}</div>
+        <div class="member-sub">${escapeHtml(u.cnic||'')} • ${escapeHtml(u.college||'')}</div>
+      </div>
+      <div class="member-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewMember('${u.uid||u.id}')">👁️</button>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderMembers = renderMembers;
+
+async function viewMember(uid) {
+  const u = allUsers.find(x => (x.uid === uid || x.id === uid));
+  if (!u) return;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">👤 ${escapeHtml(u.name)}</div>
+    <div class="modal-sub">${escapeHtml(u.cnic)}</div>
+    <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${escapeHtml(u.phone||'—')}</span></div>
+    <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college||'—')}</span></div>
+    <div class="info-row"><span class="info-label">Location</span><span class="info-value">${escapeHtml(u.location||'—')}</span></div>
+    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon2);">Link</a>` : '—'}</span></div>
+    <div class="info-row"><span class="info-label">Banned</span><span class="info-value">${u.isBanned ? '🚫 Yes' : '✅ No'}</span></div>
+    <div style="display:flex; gap:8px; margin-top:16px;">
+      <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleBan('${u.uid||u.id}', ${!!u.isBanned})">${u.isBanned ? '✅ Unban' : '🚫 Ban'}</button>
+    </div>
+    <button class="btn btn-danger" style="margin-top:10px;" onclick="removeMember('${u.uid||u.id}')">🗑️ Remove Member</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.viewMember = viewMember;
+
+async function toggleBan(uid, isBanned) {
+  try {
+    await updateDoc(doc(db, 'users', uid), { isBanned: !isBanned });
+    showToast(isBanned ? '✅ Unbanned' : '🚫 Banned');
+    closeModal();
+  } catch(err) { showToast('❌ Failed', true); }
+}
+window.toggleBan = toggleBan;
+
+async function removeMember(uid) {
+  if (!confirm('Permanently delete this user from Firestore?')) return;
+  try { await deleteDoc(doc(db, 'users', uid)); showToast('✅ Removed'); closeModal(); }
+  catch(err) { showToast('❌ Failed', true); }
+}
+window.removeMember = removeMember;
+
+// ============ ANNOUNCEMENTS ============
+async function sendAnnouncement() {
+  const title = document.getElementById('annTitle').value.trim();
+  const message = document.getElementById('annMessage').value.trim();
+  if (!title || !message) { showToast('❌ Title and message required', true); return; }
+  try {
+    await addDoc(collection(db, 'announcements'), { title, message, createdAt: serverTimestamp() });
+    document.getElementById('annTitle').value = '';
+    document.getElementById('annMessage').value = '';
+    showToast('✅ Announcement sent');
+  } catch(err) { showToast('❌ Failed', true); }
+}
+window.sendAnnouncement = sendAnnouncement;
+
+function renderAdminAnnouncements() {
+  const el = document.getElementById('adminAnnList');
+  if (allAnnouncements.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">📢</div><p>No announcements</p></div>`; return; }
+  el.innerHTML = allAnnouncements.map(a => `
+    <div class="t-card">
+      <div class="t-head">
+        <div class="t-name">${escapeHtml(a.title)}</div>
+        <button class="btn btn-danger btn-sm" onclick="deleteAnn('${a.id}')">🗑️</button>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5;">${escapeHtml(a.message)}</div>
+    </div>
+  `).join('');
+}
+window.renderAdminAnnouncements = renderAdminAnnouncements;
+
+async function deleteAnn(id) {
+  if (!confirm('Delete?')) return;
+  try { await deleteDoc(doc(db, 'announcements', id)); showToast('✅ Deleted'); }
+  catch(err) { showToast('❌ Failed', true); }
+}
+window.deleteAnn = deleteAnn;
+
+</script>
+</body>
+</html>
