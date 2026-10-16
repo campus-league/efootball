@@ -345,16 +345,6 @@
   .efhub-title{font-size:13px; font-weight:700;}
   .efhub-title span{background:linear-gradient(135deg,var(--neon2),var(--pink)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
   .efhub-frame{flex:1; width:100%; border:none; background:#fff;}
-  .efhub-fallback{
-    display:none; position:absolute; inset:40px 0 0 0;
-    background:var(--bg2); padding:30px 20px; text-align:center;
-    flex-direction:column; justify-content:center; align-items:center;
-    z-index:2;
-  }
-  .efhub-fallback.show{display:flex;}
-  .efhub-fallback .ico{font-size:60px; margin-bottom:16px;}
-  .efhub-fallback h3{font-size:16px; font-weight:800; margin-bottom:8px;}
-  .efhub-fallback p{font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;}
 
   @media (max-width: 380px){
     .logo span{display:none;}
@@ -498,22 +488,15 @@
       <div class="efhub-wrap">
         <div class="efhub-bar">
           <div class="efhub-title">🎮 <span>EF HUB</span></div>
-          <button class="btn btn-outline btn-sm" onclick="openEfhubExternal()">🌐 Open in Browser</button>
+          <button class="btn btn-outline btn-sm" onclick="reloadEfhub()">🔄 Reload</button>
         </div>
         <iframe
           id="efhubFrame"
           class="efhub-frame"
-          src="https://efhub.com/"
+          src="https://efhub-proxy.ssbandaiswat.workers.dev/"
           allow="fullscreen; clipboard-read; clipboard-write"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
           referrerpolicy="no-referrer"
         ></iframe>
-        <div class="efhub-fallback" id="efhubFallback">
-          <div class="ico">🎮</div>
-          <h3>EF HUB</h3>
-          <p>Ye website iframe mein load nahi ho sakti (security restrictions).<br>Browser mein kholne ke liye neeche button dabao.</p>
-          <button class="btn btn-primary" style="max-width:280px;" onclick="openEfhubExternal()">🌐 Open efhub.com</button>
-        </div>
       </div>
     </div>
 
@@ -530,7 +513,7 @@
       <div class="section-title"><h2>⚙️ Settings</h2></div>
       <div class="t-card" onclick="editProfile()"><div class="t-head"><div class="t-name">✏️ Edit Profile</div><div style="color:var(--muted)">→</div></div></div>
       <div class="t-card" onclick="logout()"><div class="t-head"><div class="t-name" style="color:#fca5a5;">🚪 Logout</div><div style="color:var(--muted)">→</div></div></div>
-      <div class="t-card" onclick="showToast('Campus League eFootball v1.1 — Made with 💙 in Swat')"><div class="t-head"><div class="t-name">ℹ️ About</div><div style="color:var(--muted)">→</div></div></div>
+      <div class="t-card" onclick="showToast('Campus League eFootball v1.2 — Made with 💙 in Swat')"><div class="t-head"><div class="t-name">ℹ️ About</div><div style="color:var(--muted)">→</div></div></div>
     </div>
   </main>
 
@@ -1216,7 +1199,6 @@ async function registerTournament(id, isFree, amount) {
       verifiedAt: isFree ? serverTimestamp() : null
     });
 
-    // Only increment joined if approved (free) — for paid, increment after admin verify
     if (isFree) {
       await updateDoc(doc(db, 'tournaments', id), { joined: (t.joined || 0) + 1 });
     }
@@ -1283,43 +1265,16 @@ function go(page, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // Hide EF HUB frame when not on efhub page
-  if (page !== 'efhub') {
-    const f = document.getElementById('efhubFallback');
-    if (f) f.classList.remove('show');
-  }
 }
 window.go = go;
 
 // ============ EF HUB ============
-function openEfhubExternal() {
-  window.open('https://efhub.com/', '_blank', 'noopener,noreferrer');
+function reloadEfhub() {
+  const f = document.getElementById('efhubFrame');
+  if (f) f.src = f.src;
+  showToast('🔄 Reloading EF Hub...');
 }
-window.openEfhubExternal = openEfhubExternal;
-
-// Detect iframe load failure (heuristic)
-window.addEventListener('load', () => {
-  const frame = document.getElementById('efhubFrame');
-  if (frame) {
-    frame.addEventListener('load', () => {
-      // Can't reliably detect X-Frame-Options denial cross-origin,
-      // but often the iframe stays blank. Show a hint after 4s if user stays.
-      setTimeout(() => {
-        try {
-          // If cross-origin blocked, accessing contentDocument throws
-          const doc = frame.contentDocument;
-          if (!doc) throw new Error('blocked');
-        } catch(e) {
-          // Show fallback button prominently
-          document.getElementById('efhubFallback')?.classList.add('show');
-        }
-      }, 2000);
-    });
-    frame.addEventListener('error', () => {
-      document.getElementById('efhubFallback')?.classList.add('show');
-    });
-  }
-});
+window.reloadEfhub = reloadEfhub;
 
 function renderProfilePage() {
   const u = currentProfile;
@@ -1548,7 +1503,6 @@ window.viewScreenshot = viewScreenshot;
 // ============ VERIFY / DENY WITH PASSWORD ============
 function promptVerify(rid, action) {
   const actionText = action === 'approve' ? 'Verify' : 'Deny';
-  const color = action === 'approve' ? 'var(--green)' : 'var(--red)';
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-title">🔐 Confirm ${actionText}</div>
     <div class="modal-sub">Password dalo: <strong>${actionText}</strong> karne ke liye</div>
@@ -1556,7 +1510,7 @@ function promptVerify(rid, action) {
       <label>Admin Password</label>
       <input type="password" id="verifyPassword" placeholder="Enter admin password" autofocus>
     </div>
-    <button class="btn ${action === 'approve' ? 'btn-success' : 'btn-danger'}" onclick="confirmVerify('${rid}','${action}')">${actionText === 'Verify' ? '✅' : '❌'} ${actionText} Registration</button>
+    <button class="btn ${action === 'approve' ? 'btn-success' : 'btn-danger'}" onclick="confirmVerify('${rid}','${action}')">${action === 'approve' ? '✅' : '❌'} ${actionText} Registration</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
   `;
   document.getElementById('modal').classList.add('show');
@@ -1586,7 +1540,6 @@ async function confirmVerify(rid, action) {
       if (t) await updateDoc(doc(db, 'tournaments', t.id), { joined: (t.joined || 0) + 1 });
       showToast('✅ Registration approved!');
     } else {
-      // Deny: just mark as denied (don't delete so user can see in "My")
       await updateDoc(doc(db, 'registrations', rid), {
         status: 'denied',
         deniedAt: serverTimestamp()
