@@ -116,18 +116,22 @@
     display:flex; align-items:center; justify-content:space-between;
     gap:10px;
   }
-  .header-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .header-left{display:flex; align-items:center; gap:8px; min-width:0;}
   .admin-switch-btn{
     background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(6,182,212,0.15));
     border:1px solid rgba(124,58,237,0.4);
-    color:var(--text);
-    padding:6px 10px; border-radius:10px;
-    font-size:11px; font-weight:700;
-    cursor:pointer; white-space:nowrap;
-    font-family:inherit;
-    transition:all .2s;
+    color:var(--text); padding:6px 10px; border-radius:10px;
+    font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;
+    font-family:inherit; transition:all .2s;
   }
-  .admin-switch-btn:active{transform:scale(0.95);}
+  .support-btn, .channel-btn{
+    background:linear-gradient(135deg,rgba(37,211,102,0.2),rgba(37,211,102,0.1));
+    border:1px solid rgba(37,211,102,0.4);
+    color:#25D366; padding:6px 10px; border-radius:10px;
+    font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;
+    font-family:inherit; transition:all .2s;
+  }
+  .admin-switch-btn:active, .support-btn:active, .channel-btn:active{transform:scale(0.95);}
   .logo{font-size:16px; font-weight:800; letter-spacing:-0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .logo span{background:linear-gradient(135deg,var(--neon),var(--neon2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
   .header-right{display:flex; align-items:center; gap:10px; flex-shrink:0;}
@@ -177,9 +181,8 @@
   .t-status.upcoming{background:rgba(251,191,36,0.2); color:#fcd34d;}
   .t-status.completed{background:rgba(148,163,184,0.2); color:#cbd5e1;}
   .t-status.cancelled{background:rgba(239,68,68,0.2); color:#fca5a5;}
-  .t-status.pending{background:rgba(251,191,36,0.2); color:#fcd34d;}
-  .t-status.approved{background:rgba(16,185,129,0.2); color:#6ee7b7;}
-  .t-status.denied{background:rgba(239,68,68,0.2); color:#fca5a5;}
+  .t-status.group_stage{background:rgba(6,182,212,0.2); color:#67e8f9;}
+  .t-status.knockout_stage{background:rgba(251,191,36,0.2); color:#fcd34d;}
   .t-meta{display:flex; gap:12px; font-size:11px; color:var(--muted); margin-top:8px; flex-wrap:wrap;}
   .t-meta span{display:flex; align-items:center; gap:4px;}
   .t-prize{color:var(--gold); font-weight:700;}
@@ -187,6 +190,12 @@
 
   .empty{text-align:center; padding:40px 20px; color:var(--muted);}
   .empty .ico{font-size:48px; margin-bottom:12px; opacity:0.5;}
+
+  /* Sub Tabs */
+  .sub-tabs{display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; padding-bottom:4px; scrollbar-width:none;}
+  .sub-tabs::-webkit-scrollbar{display:none;}
+  .sub-tab{padding:8px 14px; background:var(--card); border:1px solid var(--border); border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer; color:var(--muted);}
+  .sub-tab.active{background:linear-gradient(135deg,var(--neon),var(--pink)); border-color:transparent; color:white;}
 
   nav.bottom{
     position:fixed; bottom:0; left:0; right:0; z-index:100;
@@ -264,12 +273,9 @@
   .member-switch-btn{
     background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.15));
     border:1px solid rgba(16,185,129,0.4);
-    color:var(--text);
-    padding:6px 12px; border-radius:10px;
-    font-size:11px; font-weight:700;
-    cursor:pointer; white-space:nowrap;
-    font-family:inherit;
-    transition:all .2s;
+    color:var(--text); padding:6px 12px; border-radius:10px;
+    font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;
+    font-family:inherit; transition:all .2s;
   }
   .member-switch-btn:active{transform:scale(0.95);}
 
@@ -330,6 +336,46 @@
 
   .divider{height:1px; background:var(--border); margin:20px 0;}
 
+  /* MATCH CARDS & BRACKET */
+  .match-card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:12px; margin-bottom:10px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .match-header{display:flex; justify-content:space-between; font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase;}
+  .match-players{display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600;}
+  .match-p1, .match-p2{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; flex-direction:column;}
+  .match-p2{text-align:right; align-items:flex-end;}
+  .match-team{font-size:11px; color:var(--gold); font-weight:600; margin-top:4px; display:flex; align-items:center; gap:6px;}
+  .match-team img{width:24px; height:24px; object-fit:contain;}
+  .match-score{font-size:16px; font-weight:800; color:var(--gold); background:var(--bg2); padding:4px 10px; border-radius:8px; margin:0 10px;}
+  .match-winner{color:var(--green);}
+  .wa-icon{display:inline-block; width:24px; height:24px; background:#25D366; border-radius:50%; text-align:center; line-height:24px; margin-left:6px; cursor:pointer; text-decoration:none; font-size:14px;}
+  
+  /* STANDINGS TABLE */
+  .standings-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:20px;}
+  .standings-table th, .standings-table td{padding:8px 4px; text-align:center; border-bottom:1px solid var(--border);}
+  .standings-table th{color:var(--muted); font-size:10px; text-transform:uppercase;}
+  .standings-table td:nth-child(2){text-align:left; font-weight:600;}
+  .standings-table tr.qualify{background:rgba(16,185,129,0.1);}
+
+  /* TEAM SELECTION GRID */
+  .team-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:16px;}
+  .team-btn{
+    background:var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:10px 4px; text-align:center; cursor:pointer; transition:all .2s;
+    position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100px;
+  }
+  .team-btn:active{transform:scale(0.95);}
+  .team-btn.selected{border-color:var(--green); background:rgba(16,185,129,0.1); box-shadow:0 0 10px rgba(16,185,129,0.3);}
+  .team-btn.disabled{opacity:0.3; pointer-events:none; filter:grayscale(100%);}
+  
+  /* TEAM NAME UPAR (YELLOW), LOGO NEECHE (BADA) */
+  .team-name{font-size:9px; font-weight:700; line-height:1.1; text-transform:uppercase; margin-bottom:6px; color:var(--muted);}
+  .team-btn.selected .team-name { color: white; }
+  .team-logo{width:48px; height:48px; object-fit:contain; display:block;}
+
   /* EF HUB */
   #page-efhub{padding:0; max-width:100%; margin:0;}
   .efhub-wrap{
@@ -348,10 +394,13 @@
 
   @media (max-width: 380px){
     .logo span{display:none;}
-    .admin-switch-btn{padding:6px 8px; font-size:10px;}
+    .admin-switch-btn, .support-btn, .channel-btn{padding:6px 8px; font-size:10px;}
     .member-switch-btn{padding:6px 8px; font-size:10px;}
     .nav-item .lbl{font-size:9px;}
     .nav-item .ico{font-size:18px;}
+    .team-btn{min-height:85px;}
+    .team-logo{width:40px; height:40px;}
+    .team-name{font-size:8px;}
   }
 </style>
 </head>
@@ -451,9 +500,11 @@
   <header>
     <div class="header-left">
       <button class="admin-switch-btn" onclick="showAdminLogin()">🔐 Admin</button>
-      <div class="logo">⚽ <span>Campus League</span></div>
+      <button class="support-btn" onclick="contactAdmin()">💬 Support</button>
+      <button class="channel-btn" onclick="joinChannel()">📢 Channel</button>
     </div>
     <div class="header-right">
+      <div class="logo">⚽ <span>Campus League</span></div>
       <div class="avatar-sm" id="headerAvatar" onclick="go('profile')">U</div>
     </div>
   </header>
@@ -464,10 +515,8 @@
         <h1>Welcome, <span id="homeUserName">Player</span> 👋</h1>
         <p>Apne college ki izzat ke liye khelo. Jeeto, kamao, aur champion bano.</p>
       </div>
-
       <div class="section-title"><h2>🔥 Active Tournaments</h2></div>
       <div id="homeTournaments"></div>
-
       <div class="section-title"><h2>📢 Announcements</h2></div>
       <div id="homeAnnouncements"></div>
     </div>
@@ -478,10 +527,30 @@
       <div id="allTournaments"></div>
     </div>
 
+    <!-- ME TAB (Matches/Stats) -->
     <div class="page" id="page-matches">
-      <h2 style="font-size:20px; font-weight:800; margin-bottom:4px;">My Registrations</h2>
-      <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Tumhare registered tournaments</p>
-      <div id="myRegistrations"></div>
+      <h2 style="font-size:20px; font-weight:800; margin-bottom:12px;">My Dashboard</h2>
+      
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="switchMyTab('regs', this)">🎮 My Tournaments</div>
+        <div class="sub-tab" onclick="switchMyTab('fixtures', this)">⏳ Fixtures</div>
+        <div class="sub-tab" onclick="switchMyTab('results', this)">🏆 Results</div>
+        <div class="sub-tab" onclick="switchMyTab('standings', this)">📊 Standings</div>
+        <div class="sub-tab" onclick="switchMyTab('stats', this)">📈 My Stats</div>
+      </div>
+
+      <div id="myTab-regs"><div id="myRegistrations"></div></div>
+      <div id="myTab-fixtures" style="display:none;"><div id="myFixtures"></div></div>
+      <div id="myTab-results" style="display:none;"><div id="myResults"></div></div>
+      <div id="myTab-standings" style="display:none;"><div id="myStandings"></div></div>
+      <div id="myTab-stats" style="display:none;">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-val" id="statTotalMatches">0</div><div class="stat-lbl">Matches Played</div></div>
+          <div class="stat-card"><div class="stat-val" id="statTotalWins">0</div><div class="stat-lbl">Wins</div></div>
+          <div class="stat-card"><div class="stat-val" id="statTotalLosses">0</div><div class="stat-lbl">Losses</div></div>
+          <div class="stat-card"><div class="stat-val" id="statWinRate">0%</div><div class="stat-lbl">Win Rate</div></div>
+        </div>
+      </div>
     </div>
 
     <div class="page" id="page-efhub">
@@ -490,13 +559,7 @@
           <div class="efhub-title">🎮 <span>EF HUB</span></div>
           <button class="btn btn-outline btn-sm" onclick="reloadEfhub()">🔄 Reload</button>
         </div>
-        <iframe
-          id="efhubFrame"
-          class="efhub-frame"
-          src="https://efhub-proxy.ssbandaiswat.workers.dev/"
-          allow="fullscreen; clipboard-read; clipboard-write"
-          referrerpolicy="no-referrer"
-        ></iframe>
+        <iframe id="efhubFrame" class="efhub-frame" src="https://efhub-proxy.ssbandaiswat.workers.dev/" allow="fullscreen; clipboard-read; clipboard-write" referrerpolicy="no-referrer"></iframe>
       </div>
     </div>
 
@@ -506,14 +569,11 @@
         <div class="profile-name" id="profileName">Player</div>
         <div class="profile-college" id="profileCollege">—</div>
       </div>
-
       <div class="section-title"><h2>👤 My Info</h2></div>
       <div id="profileInfo"></div>
-
       <div class="section-title"><h2>⚙️ Settings</h2></div>
       <div class="t-card" onclick="editProfile()"><div class="t-head"><div class="t-name">✏️ Edit Profile</div><div style="color:var(--muted)">→</div></div></div>
       <div class="t-card" onclick="logout()"><div class="t-head"><div class="t-name" style="color:#fca5a5;">🚪 Logout</div><div style="color:var(--muted)">→</div></div></div>
-      <div class="t-card" onclick="showToast('Campus League eFootball v1.2 — Made with 💙 in Swat')"><div class="t-head"><div class="t-name">ℹ️ About</div><div style="color:var(--muted)">→</div></div></div>
     </div>
   </main>
 
@@ -538,7 +598,7 @@
     </div>
   </div>
 
-  <div class="admin-nav">
+  <div class="admin-nav" id="adminMainNav">
     <div class="admin-tab active" onclick="adminGo('dash',this)">📊 Dashboard</div>
     <div class="admin-tab" onclick="adminGo('tournaments',this)">🏆 Tournaments</div>
     <div class="admin-tab" onclick="adminGo('members',this)">👥 Members</div>
@@ -565,6 +625,18 @@
     <div id="adminTournamentList"></div>
   </div>
 
+  <!-- BRACKET MANAGEMENT PAGE (Hidden from nav) -->
+  <div class="admin-page" id="admin-bracket">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="btn btn-outline btn-sm" onclick="adminGo('tournaments')">← Back</button>
+        <h2 style="font-size:16px; font-weight:700;" id="bracketTitle">Tournament</h2>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="adminGenerateNextStage()" id="btnGenerateStage" style="display:none;">Generate Next Stage</button>
+    </div>
+    <div id="bracketContainer"></div>
+  </div>
+
   <div class="admin-page" id="admin-members">
     <h2 style="font-size:16px; font-weight:700; margin-bottom:14px;">Registered Members</h2>
     <div class="search-bar">
@@ -576,7 +648,7 @@
   <div class="admin-page" id="admin-registrations">
     <h2 style="font-size:16px; font-weight:700; margin-bottom:14px;">All Registrations</h2>
     <div style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" onclick="filterRegs('all',this)" id="regFilterAll" style="background:linear-gradient(135deg,var(--neon),var(--pink));border-color:transparent;">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRegs('all',this)" style="background:linear-gradient(135deg,var(--neon),var(--pink));border-color:transparent;">All</button>
       <button class="btn btn-outline btn-sm" onclick="filterRegs('pending',this)">⏳ Pending</button>
       <button class="btn btn-outline btn-sm" onclick="filterRegs('approved',this)">✅ Approved</button>
       <button class="btn btn-outline btn-sm" onclick="filterRegs('denied',this)">❌ Denied</button>
@@ -611,7 +683,6 @@
 <div id="toast"></div>
 
 <script>
-// ============ SUPPRESS SANDBOX STORAGE ERRORS ============
 (function() {
   const origError = console.error;
   console.error = function(...args) {
@@ -622,12 +693,6 @@
   window.addEventListener('error', (e) => {
     if (e.message && (e.message.includes('localStorage') || e.message.includes('sessionStorage') || e.message.includes('sandboxed'))) {
       e.preventDefault(); return true;
-    }
-  });
-  window.addEventListener('unhandledrejection', (e) => {
-    const msg = String(e.reason || '');
-    if (msg.includes('localStorage') || msg.includes('sessionStorage') || msg.includes('sandboxed')) {
-      e.preventDefault(); return;
     }
   });
 })();
@@ -641,10 +706,7 @@ function isStorageAvailable(type) {
     return true;
   } catch(e) { return false; }
 }
-const LOCAL_OK = isStorageAvailable('localStorage');
-const SESSION_OK = isStorageAvailable('sessionStorage');
-console.log('📦 Storage:', { localStorage: LOCAL_OK, sessionStorage: SESSION_OK });
-window._CL_STORAGE = { LOCAL_OK, SESSION_OK };
+window._CL_STORAGE = { LOCAL_OK: isStorageAvailable('localStorage'), SESSION_OK: isStorageAvailable('sessionStorage') };
 </script>
 
 <script type="module">
@@ -656,10 +718,9 @@ import {
 import {
   getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs,
   updateDoc, deleteDoc, query, where, orderBy, onSnapshot,
-  serverTimestamp, limit
+  serverTimestamp, limit, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ============ FIREBASE CONFIG ============
 const firebaseConfig = {
   apiKey: "AIzaSyDGKq2mUP5tPHdeXAbFaWWe0ERf5nu4vT0",
   authDomain: "campus-league-efootball.firebaseapp.com",
@@ -670,51 +731,55 @@ const firebaseConfig = {
   measurementId: "G-WHMWWY9Q8G"
 };
 
-// ============ ADMIN CREDENTIALS (HARDCODED) ============
 const ADMIN_CNIC = "15604-0398770-5";
 const ADMIN_PASSWORD = "Sallu2009";
+const WA_CHANNEL_URL = "https://whatsapp.com/channel/0029VbDfr5T2f3EHbpc8Vb2Z";
+
+// --- TOP 16 UCL TEAMS WITH API-SPORTS DIRECT IMAGES ---
+const UCL_TEAMS = [
+  // Yahan aapka diya hua link use kiya hai
+  { id: 'rma', name: 'Real Madrid', logo: 'https://i.postimg.cc/LsdDtD2G/Real-Madrid-CF-svg.png' },
+  { id: 'mci', name: 'Man City', logo: 'https://media.api-sports.io/football/teams/50.png' },
+  { id: 'bay', name: 'Bayern', logo: 'https://media.api-sports.io/football/teams/157.png' },
+  { id: 'psg', name: 'PSG', logo: 'https://media.api-sports.io/football/teams/85.png' },
+  { id: 'liv', name: 'Liverpool', logo: 'https://media.api-sports.io/football/teams/40.png' },
+  { id: 'int', name: 'Inter', logo: 'https://media.api-sports.io/football/teams/505.png' },
+  { id: 'bvb', name: 'Dortmund', logo: 'https://media.api-sports.io/football/teams/165.png' },
+  { id: 'rbl', name: 'Leipzig', logo: 'https://media.api-sports.io/football/teams/173.png' },
+  { id: 'bar', name: 'Barcelona', logo: 'https://media.api-sports.io/football/teams/529.png' },
+  { id: 'ars', name: 'Arsenal', logo: 'https://media.api-sports.io/football/teams/42.png' },
+  { id: 'atm', name: 'Atletico', logo: 'https://media.api-sports.io/football/teams/530.png' },
+  { id: 'mun', name: 'Man United', logo: 'https://media.api-sports.io/football/teams/33.png' },
+  { id: 'che', name: 'Chelsea', logo: 'https://media.api-sports.io/football/teams/49.png' },
+  { id: 'juv', name: 'Juventus', logo: 'https://media.api-sports.io/football/teams/496.png' },
+  { id: 'acm', name: 'AC Milan', logo: 'https://media.api-sports.io/football/teams/489.png' },
+  { id: 'nap', name: 'Napoli', logo: 'https://media.api-sports.io/football/teams/492.png' }
+];
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ============ PERSISTENCE ============
 (async () => {
   const storageInfo = window._CL_STORAGE || { LOCAL_OK: false };
   try {
-    if (storageInfo.LOCAL_OK) {
-      await setPersistence(auth, browserLocalPersistence);
-      console.log('✅ Persistence: browserLocalPersistence');
-    } else {
-      await setPersistence(auth, inMemoryPersistence);
-      console.log('⚠️ Persistence: inMemoryPersistence (sandbox)');
-    }
-  } catch(e) {
-    try { await setPersistence(auth, inMemoryPersistence); } catch(e2) {}
-  }
+    if (storageInfo.LOCAL_OK) await setPersistence(auth, browserLocalPersistence);
+    else await setPersistence(auth, inMemoryPersistence);
+  } catch(e) { try { await setPersistence(auth, inMemoryPersistence); } catch(e2) {} }
 })();
 
-// ============ STATE ============
-let currentUser = null;
-let currentProfile = null;
+let currentUser = null, currentProfile = null;
 let adminUser = null;
-let allUsers = [];
-let allTournaments = [];
-let allRegistrations = [];
-let allAnnouncements = [];
-let selectedPicBase64 = null;
-let selectedScreenshotBase64 = null;
-let appLoaded = false;
-let adminSubscribed = false;
-let currentRegFilter = 'all';
+let allUsers = [], allTournaments = [], allRegistrations = [], allAnnouncements = [];
+let selectedPicBase64 = null, selectedScreenshotBase64 = null;
+let appLoaded = false, adminSubscribed = false, currentRegFilter = 'all';
+let activeBracketTournamentId = null;
+let currentBracketData = { matches: [], tournament: null };
+let _selectedTeamId = null, _selectedTeamName = null, _selectedTeamLogo = null;
 
-// ============ HELPERS ============
 function cnicToEmail(cnic) { return cnic.replace(/-/g, '') + '@campusleague.local'; }
 function validateCNIC(c) { return /^\d{5}-\d{7}-\d$/.test(c); }
-function validatePhone(p) {
-  p = p.replace(/[-\s]/g, '');
-  return /^(\+92|0|92)?3\d{9}$/.test(p);
-}
+function validatePhone(p) { return /^(\+92|0|92)?3\d{9}$/.test(p.replace(/[-\s]/g, '')); }
 function normalizePhone(p) {
   p = p.replace(/[-\s]/g, '');
   if (p.startsWith('0')) return '+92' + p.slice(1);
@@ -738,46 +803,31 @@ function fileToBase64(file, maxSize = 400, quality = 0.75) {
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.width = img.width * scale; canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
-      img.onerror = reject;
-      img.src = e.target.result;
+      img.onerror = reject; img.src = e.target.result;
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    reader.onerror = reject; reader.readAsDataURL(file);
   });
 }
 
 function showToast(msg, isError = false) {
-  if (msg && (msg.includes('localStorage') || msg.includes('sandboxed'))) {
-    msg = '⚠️ Preview mode: session save nahi hoga. Real browser mein test karo.';
-  }
+  if (msg && (msg.includes('localStorage') || msg.includes('sandboxed'))) msg = '⚠️ Preview mode: session save nahi hoga.';
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = isError ? 'show error' : 'show';
+  t.textContent = msg; t.className = isError ? 'show error' : 'show';
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => t.className = '', 2800);
 }
 window.showToast = showToast;
-
-function escapeHtml(s) {
-  return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
+function escapeHtml(s) { return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 window.escapeHtml = escapeHtml;
 
-// ============ SPLASH ============
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('splash').classList.add('hide'), 1500);
-});
-
+window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hide'), 1500));
 document.getElementById('signupCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
 document.getElementById('loginCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
 
-// ============ AUTH TABS ============
 function switchAuthTab(tab) {
   document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
   document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
@@ -786,42 +836,29 @@ function switchAuthTab(tab) {
 }
 window.switchAuthTab = switchAuthTab;
 
-// ============ PIC SELECT ============
 async function handlePicSelect(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   if (file.size > 2 * 1024 * 1024) { showToast('❌ Image 2MB se choti honi chahiye', true); return; }
-  try {
-    selectedPicBase64 = await fileToBase64(file, 400, 0.75);
-    document.getElementById('picPreview').innerHTML = `<img src="${selectedPicBase64}">`;
-  } catch(err) { showToast('❌ Image load nahi ho saki', true); }
+  try { selectedPicBase64 = await fileToBase64(file, 400, 0.75); document.getElementById('picPreview').innerHTML = `<img src="${selectedPicBase64}">`; }
+  catch(err) { showToast('❌ Image load nahi ho saki', true); }
 }
 window.handlePicSelect = handlePicSelect;
 
-// ============ GEOLOCATION ============
 function getLocation() {
   if (!navigator.geolocation) { showToast('❌ Location not supported', true); return; }
   showToast('📍 Getting location...');
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-        const data = await res.json();
-        const addr = data.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-        document.getElementById('signupLocation').value = addr;
-        showToast('✅ Location set!');
-      } catch {
-        document.getElementById('signupLocation').value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-      }
-    },
-    (err) => showToast('❌ Location permission denied', true),
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      const data = await res.json();
+      document.getElementById('signupLocation').value = data.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      showToast('✅ Location set!');
+    } catch { document.getElementById('signupLocation').value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`; }
+  }, (err) => showToast('❌ Location permission denied', true), { enableHighAccuracy: true, timeout: 10000 });
 }
 window.getLocation = getLocation;
 
-// ============ SIGNUP ============
 async function doSignup() {
   const btn = document.getElementById('signupBtn');
   const name = document.getElementById('signupName').value.trim();
@@ -831,7 +868,6 @@ async function doSignup() {
   const location = document.getElementById('signupLocation').value.trim();
   const password = document.getElementById('signupPassword').value;
   const twitch = document.getElementById('signupTwitch').value.trim();
-
   document.querySelectorAll('.form-err').forEach(e => e.classList.remove('show'));
 
   if (!name) { showToast('❌ Name required', true); return; }
@@ -842,79 +878,50 @@ async function doSignup() {
   if (password.length < 6) { document.getElementById('errPassword').classList.add('show'); return; }
   if (!selectedPicBase64) { showToast('❌ Profile picture required', true); return; }
 
-  btn.disabled = true; btn.textContent = 'Creating account...';
+  btn.disabled = true; btn.textContent = 'Creating...';
   try {
     const email = cnicToEmail(cnic);
     const existing = await getDocs(query(collection(db, 'users'), where('cnic', '==', cnic)));
-    if (!existing.empty) throw new Error('This CNIC is already registered');
+    if (!existing.empty) throw new Error('CNIC already registered');
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
     await setDoc(doc(db, 'users', userCred.user.uid), {
-      uid: userCred.user.uid, name, cnic,
-      phone: normalizePhone(phone),
-      college, location,
-      twitchId: twitch || '',
-      profilePic: selectedPicBase64,
-      isAdmin: false, isBanned: false,
-      createdAt: serverTimestamp()
+      uid: userCred.user.uid, name, cnic, phone: normalizePhone(phone), college, location,
+      twitchId: twitch || '', profilePic: selectedPicBase64, isAdmin: false, isBanned: false, createdAt: serverTimestamp()
     });
     showToast('✅ Account created!');
   } catch (err) {
-    console.error(err);
-    let msg = err.message || 'Signup failed';
-    if (msg.includes('email-already-in-use')) msg = 'This CNIC is already registered';
-    if (msg.includes('weak-password')) msg = 'Password too weak';
-    showToast('❌ ' + msg, true);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Create Account';
-  }
+    showToast('❌ ' + (err.message.includes('email-already-in-use') ? 'CNIC already registered' : err.message), true);
+  } finally { btn.disabled = false; btn.textContent = 'Create Account'; }
 }
 window.doSignup = doSignup;
 
-// ============ LOGIN ============
 async function doLogin() {
   const btn = document.getElementById('loginBtn');
   const cnic = document.getElementById('loginCnic').value.trim();
   const password = document.getElementById('loginPassword').value;
-  if (!validateCNIC(cnic)) { showToast('❌ Invalid CNIC format', true); return; }
+  if (!validateCNIC(cnic)) { showToast('❌ Invalid CNIC', true); return; }
   if (!password) { showToast('❌ Password required', true); return; }
-
   btn.disabled = true; btn.textContent = 'Logging in...';
   try {
-    const email = cnicToEmail(cnic);
-    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const cred = await signInWithEmailAndPassword(auth, cnicToEmail(cnic), password);
     const profileDoc = await getDoc(doc(db, 'users', cred.user.uid));
     if (!profileDoc.exists()) throw new Error('Profile not found');
-    const profile = profileDoc.data();
-    if (profile.isBanned) {
-      await signOut(auth);
-      throw new Error('Your account has been banned');
-    }
-    showToast('✅ Welcome back, ' + profile.name.split(' ')[0]);
+    if (profileDoc.data().isBanned) { await signOut(auth); throw new Error('Account banned'); }
+    showToast('✅ Welcome back, ' + profileDoc.data().name.split(' ')[0]);
   } catch (err) {
-    console.error(err);
-    let msg = err.message || 'Login failed';
-    if (msg.includes('invalid-credential') || msg.includes('wrong-password') || msg.includes('user-not-found')) {
-      msg = 'Invalid CNIC or password';
-    }
+    let msg = err.message;
+    if (msg.includes('invalid-credential') || msg.includes('user-not-found') || msg.includes('wrong-password')) msg = 'Invalid CNIC or password';
     showToast('❌ ' + msg, true);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Login';
-  }
+  } finally { btn.disabled = false; btn.textContent = 'Login'; }
 }
 window.doLogin = doLogin;
 
-// ============ AUTH STATE ============
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const profileDoc = await getDoc(doc(db, 'users', user.uid));
     if (!profileDoc.exists()) return;
-    currentUser = user;
-    currentProfile = { uid: user.uid, ...profileDoc.data() };
-    if (currentProfile.isBanned) {
-      await signOut(auth);
-      showToast('❌ Your account has been banned', true);
-      return;
-    }
+    currentUser = user; currentProfile = { uid: user.uid, ...profileDoc.data() };
+    if (currentProfile.isBanned) { await signOut(auth); showToast('❌ Account banned', true); return; }
     if (!adminUser) {
       document.getElementById('authScreen').classList.remove('active');
       document.getElementById('adminScreen').classList.remove('active');
@@ -931,441 +938,862 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-async function logout() {
-  await signOut(auth);
-  currentUser = null; currentProfile = null; appLoaded = false;
-  location.reload();
-}
+async function logout() { await signOut(auth); location.reload(); }
 window.logout = logout;
 
-// ============ LOAD APP ============
+function contactAdmin() {
+  window.open('https://wa.me/923299950239?text=Assalam%20o%20Alaikum%20Admin,%20mujhe%20Campus%20League%20mein%20madad%20chahiye.', '_blank');
+}
+window.contactAdmin = contactAdmin;
+
+function joinChannel() {
+  window.open(WA_CHANNEL_URL, '_blank');
+}
+window.joinChannel = joinChannel;
+
 function loadApp() {
-  if (appLoaded) return;
-  appLoaded = true;
+  if (appLoaded) return; appLoaded = true;
   renderUserHeader();
-  subscribeTournaments();
-  subscribeAnnouncements();
-  subscribeMyRegistrations();
-  renderProfilePage();
+  subscribeTournaments(); subscribeAnnouncements(); subscribeMyRegistrations(); renderProfilePage();
 }
 
 function renderUserHeader() {
-  const u = currentProfile;
-  if (!u) return;
+  const u = currentProfile; if (!u) return;
   document.getElementById('homeUserName').textContent = u.name.split(' ')[0];
   document.getElementById('headerAvatar').innerHTML = u.profilePic ? `<img src="${u.profilePic}">` : u.name.charAt(0).toUpperCase();
 }
 
+// ============ MEMBER SUB-TABS ============
+function switchMyTab(tab, el) {
+  document.querySelectorAll('#page-matches .sub-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  
+  document.getElementById('myTab-regs').style.display = tab === 'regs' ? 'block' : 'none';
+  document.getElementById('myTab-fixtures').style.display = tab === 'fixtures' ? 'block' : 'none';
+  document.getElementById('myTab-results').style.display = tab === 'results' ? 'block' : 'none';
+  document.getElementById('myTab-standings').style.display = tab === 'standings' ? 'block' : 'none';
+  document.getElementById('myTab-stats').style.display = tab === 'stats' ? 'block' : 'none';
+}
+window.switchMyTab = switchMyTab;
+
+let allMyMatches = [];
+
 function subscribeTournaments() {
-  const q = query(collection(db, 'tournaments'), orderBy('createdAt', 'desc'));
-  onSnapshot(q, (snap) => {
+  onSnapshot(query(collection(db, 'tournaments'), orderBy('createdAt', 'desc')), (snap) => {
     allTournaments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderHomeTournaments();
-    renderAllTournaments();
-    renderMyRegistrations();
+    renderHomeTournaments(); renderAllTournaments(); renderMyRegistrations();
     if (document.getElementById('admin-tournaments').classList.contains('active')) renderAdminTournaments();
-  }, (err) => console.error('Tournaments sub error:', err));
+  });
 }
 
 function subscribeAnnouncements() {
-  const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20));
-  onSnapshot(q, (snap) => {
+  onSnapshot(query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20)), (snap) => {
     allAnnouncements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderHomeAnnouncements();
     if (document.getElementById('admin-announce').classList.contains('active')) renderAdminAnnouncements();
-  }, (err) => console.error('Ann error:', err));
+  });
 }
 
 function subscribeMyRegistrations() {
   if (!currentUser) return;
-  const q = query(collection(db, 'registrations'), where('userId', '==', currentUser.uid));
-  onSnapshot(q, (snap) => {
+  onSnapshot(query(collection(db, 'registrations'), where('userId', '==', currentUser.uid)), (snap) => {
     const regs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderMyRegistrations(regs);
-  }, (err) => console.error('Reg error:', err));
+  });
+  onSnapshot(query(collection(db, 'matches'), where('player1.userId', '==', currentUser.uid)), (snap) => {
+    const m1 = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    onSnapshot(query(collection(db, 'matches'), where('player2.userId', '==', currentUser.uid)), (snap2) => {
+      const m2 = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+      const matchMap = new Map();
+      [...m1, ...m2].forEach(m => matchMap.set(m.id, m));
+      allMyMatches = Array.from(matchMap.values());
+      renderMyMatches();
+    });
+  });
 }
 
 function renderHomeTournaments() {
   const el = document.getElementById('homeTournaments');
-  const active = allTournaments.filter(t => t.status === 'open' || t.status === 'live').slice(0, 3);
-  if (active.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>Koi active tournament nahi</p></div>`;
-    return;
-  }
-  el.innerHTML = active.map(t => tournamentCardHTML(t)).join('');
+  const active = allTournaments.filter(t => t.status === 'open' || t.status === 'live' || t.status === 'group_stage' || t.status === 'knockout_stage').slice(0, 3);
+  el.innerHTML = active.length === 0 ? `<div class="empty"><div class="ico">⚽</div><p>No active tournaments</p></div>` : active.map(t => tournamentCardHTML(t)).join('');
 }
 
 function renderAllTournaments() {
   const el = document.getElementById('allTournaments');
-  if (allTournaments.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>Abhi koi tournament nahi hai</p></div>`;
-    return;
-  }
-  el.innerHTML = allTournaments.map(t => tournamentCardHTML(t)).join('');
+  el.innerHTML = allTournaments.length === 0 ? `<div class="empty"><div class="ico">⚽</div><p>Abhi koi tournament nahi hai</p></div>` : allTournaments.map(t => tournamentCardHTML(t)).join('');
 }
 
 function tournamentCardHTML(t) {
-  const statusLabels = { live:'🔴 Live', open:'✅ Open', upcoming:'⏳ Soon', completed:'🏁 Done', cancelled:'❌ Cancelled' };
-  const statusLabel = statusLabels[t.status] || t.status;
-  const joined = t.joined || 0;
-  const slots = t.maxSlots || 0;
-  const pct = slots > 0 ? Math.min(100, Math.round((joined / slots) * 100)) : 0;
-  const startDate = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', { dateStyle:'medium', timeStyle:'short' }) : 'TBA';
+  const sl = { live:'🔴 Live', open:'✅ Open', upcoming:'⏳ Soon', completed:'🏁 Done', cancelled:'❌ Cancelled', group_stage:'📊 Groups', knockout_stage:'🏆 Knockouts' }[t.status] || t.status;
+  const pct = t.maxSlots > 0 ? Math.min(100, Math.round(((t.joined||0) / t.maxSlots) * 100)) : 0;
   const isFree = (t.entryFee || 0) === 0;
-
+  const date = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', { dateStyle:'medium', timeStyle:'short' }) : 'TBA';
   return `
     <div class="t-card" onclick="openTournament('${t.id}')">
       <div class="t-head">
-        <div>
-          <div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
-          <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${startDate}</div>
-        </div>
-        <div class="t-status ${t.status}">${statusLabel}</div>
+        <div><div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${date}</div></div>
+        <div class="t-status ${t.status}">${sl}</div>
       </div>
-      <div class="t-meta">
-        <span>🏆 <span class="t-prize">Rs ${(t.prizePool||0).toLocaleString()}</span></span>
-        <span>💵 Entry: ${isFree ? 'FREE' : 'Rs ' + t.entryFee}</span>
-        <span>👥 ${joined}/${slots}</span>
-      </div>
-      <div style="margin-top:10px; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden;">
-        <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,var(--neon),var(--neon2)); border-radius:2px;"></div>
-      </div>
+      <div class="t-meta"><span>🏆 <span class="t-prize">Rs ${(t.prizePool||0).toLocaleString()}</span></span><span>💵 ${isFree?'FREE':'Rs '+t.entryFee}</span><span>👥 ${t.joined||0}/${t.maxSlots||0}</span></div>
+      <div style="margin-top:10px; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden;"><div style="height:100%; width:${pct}%; background:linear-gradient(90deg,var(--neon),var(--neon2));"></div></div>
     </div>
   `;
 }
 
 function renderHomeAnnouncements() {
   const el = document.getElementById('homeAnnouncements');
-  if (allAnnouncements.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="ico">📢</div><p>No announcements yet</p></div>`;
-    return;
-  }
-  el.innerHTML = allAnnouncements.slice(0, 3).map(a => `
-    <div class="t-card" style="cursor:default;">
-      <div class="t-head"><div class="t-name">📢 ${escapeHtml(a.title)}</div></div>
-      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5;">${escapeHtml(a.message)}</div>
-      <div style="font-size:10px; color:var(--muted); margin-top:8px;">${a.createdAt ? new Date(a.createdAt.toDate()).toLocaleString() : ''}</div>
-    </div>
+  el.innerHTML = allAnnouncements.length === 0 ? `<div class="empty"><div class="ico">📢</div><p>No announcements</p></div>` : allAnnouncements.slice(0, 3).map(a => `
+    <div class="t-card" style="cursor:default;"><div class="t-head"><div class="t-name">📢 ${escapeHtml(a.title)}</div></div>
+    <div style="font-size:12px; color:var(--muted); margin-top:6px;">${escapeHtml(a.message)}</div></div>
   `).join('');
 }
 
 function renderMyRegistrations(regs) {
   const el = document.getElementById('myRegistrations');
-  if (!regs || regs.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="ico">📋</div><p>Tumne abhi koi tournament join nahi kiya</p></div>`;
-    return;
-  }
-  const statusLabel = { pending:'⏳ Pending', approved:'✅ Approved', denied:'❌ Denied' };
+  if (!regs || regs.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">📋</div><p>No registrations yet</p></div>`; return; }
+  const sl = { pending:'⏳ Pending', approved:'✅ Approved', denied:'❌ Denied' };
   el.innerHTML = regs.map(r => {
     const t = allTournaments.find(x => x.id === r.tournamentId);
     if (!t) return '';
     const st = r.status || 'approved';
-    return `
-      <div class="t-card" style="cursor:default;">
-        <div class="t-head">
-          <div>
-            <div class="t-name">⚽ ${escapeHtml(t.name)}</div>
-            <div style="font-size:11px; color:var(--muted); margin-top:4px;">Game ID: ${escapeHtml(r.gameId || '—')}</div>
-          </div>
-          <div class="t-status ${st}">${statusLabel[st] || st}</div>
-        </div>
-        <div class="t-meta">
-          <span>📅 ${t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'medium', timeStyle:'short'}) : 'TBA'}</span>
-          ${r.amount ? `<span>💵 Rs ${r.amount}</span>` : '<span>🎁 Free</span>'}
-        </div>
-        ${st === 'pending' ? '<div style="font-size:11px; color:#fcd34d; margin-top:8px;">⏳ Payment verification pending — admin approve karega toh confirm ho jayegi</div>' : ''}
-        ${st === 'denied' ? '<div style="font-size:11px; color:#fca5a5; margin-top:8px;">❌ Registration denied — admin se contact karo</div>' : ''}
-      </div>
-    `;
+    return `<div class="t-card" style="cursor:default;">
+      <div class="t-head"><div><div class="t-name">⚽ ${escapeHtml(t.name)}</div><div style="font-size:11px; color:var(--muted);">Game ID: ${escapeHtml(r.gameId)} • Team: ${r.teamLogo ? `<img src="${r.teamLogo}" referrerpolicy="no-referrer" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;">` : ''} ${escapeHtml(r.teamName || '—')}</div></div><div class="t-status ${st}">${sl[st]}</div></div>
+    </div>`;
   }).join('');
 }
 
-// ============ OPEN TOURNAMENT ============
-async function openTournament(id) {
-  const t = allTournaments.find(x => x.id === id);
-  if (!t) return;
+function renderMyMatches() {
+  const fixtures = allMyMatches.filter(m => m.status === 'ready');
+  const fixEl = document.getElementById('myFixtures');
+  if (fixtures.length === 0) fixEl.innerHTML = `<div class="empty"><div class="ico">⏳</div><p>Koi upcoming match nahi hai</p></div>`;
+  else {
+    // Sort fixtures by matchday, then group, then matchNumber
+    fixtures.sort((a, b) => {
+      const dayA = a.matchday || 0;
+      const dayB = b.matchday || 0;
+      if (dayA !== dayB) return dayA - dayB;
+      const groupA = a.group || '';
+      const groupB = b.group || '';
+      if (groupA !== groupB) return groupA.localeCompare(groupB);
+      return (a.matchNumber || 0) - (b.matchNumber || 0);
+    });
 
-  const regQuery = await getDocs(query(
-    collection(db, 'registrations'),
-    where('tournamentId', '==', id),
-    where('userId', '==', currentUser.uid)
-  ));
-  const existingReg = regQuery.empty ? null : { id: regQuery.docs[0].id, ...regQuery.docs[0].data() };
+    const groupedFixtures = {};
+    fixtures.forEach(m => {
+      const key = m.group ? `Group ${m.group} - Matchday ${m.matchday}` : m.roundName;
+      if (!groupedFixtures[key]) groupedFixtures[key] = [];
+      groupedFixtures[key].push(m);
+    });
+    
+    let html = '';
+    for (const [key, matches] of Object.entries(groupedFixtures)) {
+      html += `<div style="font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--neon2);">${key}</div>`;
+      html += matches.map(m => matchCardHTML(m, 'fixture')).join('');
+    }
+    fixEl.innerHTML = html;
+  }
 
-  const startDate = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'medium', timeStyle:'short'}) : 'TBA';
-  const slotsLeft = (t.maxSlots || 0) - (t.joined || 0);
-  const isFree = (t.entryFee || 0) === 0;
-  selectedScreenshotBase64 = null;
+  const results = allMyMatches.filter(m => m.status === 'completed');
+  const resEl = document.getElementById('myResults');
+  if (results.length === 0) resEl.innerHTML = `<div class="empty"><div class="ico">🏆</div><p>Abhi tak koi match complete nahi hua</p></div>`;
+  else resEl.innerHTML = results.map(m => matchCardHTML(m, 'result')).join('');
 
-  document.getElementById('modalBody').innerHTML = `
-    <div class="modal-title">⚽ ${escapeHtml(t.name)}</div>
-    <div class="modal-sub">${t.format || 'Knockout'} • ${startDate}</div>
+  renderMyStandings();
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
-      <div class="stat-card"><div class="stat-val">Rs ${(t.prizePool||0).toLocaleString()}</div><div class="stat-lbl">Prize</div></div>
-      <div class="stat-card"><div class="stat-val">${isFree ? 'FREE' : 'Rs ' + t.entryFee}</div><div class="stat-lbl">Entry</div></div>
-      <div class="stat-card"><div class="stat-val">${slotsLeft}</div><div class="stat-lbl">Slots Left</div></div>
-    </div>
+  let wins = 0, losses = 0;
+  results.forEach(m => {
+    if (m.stage === 'knockout' || m.stage === 'group') {
+      if (m.winnerId === currentUser.uid) wins++; 
+      else if (m.winnerId && m.winnerId !== 'draw') losses++;
+    }
+  });
+  document.getElementById('statTotalMatches').textContent = results.length;
+  document.getElementById('statTotalWins').textContent = wins;
+  document.getElementById('statTotalLosses').textContent = losses;
+  document.getElementById('statWinRate').textContent = results.length > 0 ? Math.round((wins/results.length)*100) + '%' : '0%';
+}
 
-    ${t.description ? `<div style="font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.5;">${escapeHtml(t.description)}</div>` : ''}
+function matchCardHTML(m, type) {
+  const isP1 = m.player1?.userId === currentUser.uid;
+  const opp = isP1 ? m.player2 : m.player1;
+  const myScore = isP1 ? m.score1 : m.score2;
+  const oppScore = isP1 ? m.score2 : m.score1;
+  const isWinner = m.winnerId === currentUser.uid;
+  const isDraw = m.winnerId === 'draw';
+  const resultText = type === 'result' ? (isWinner ? '<span style="color:var(--green); font-weight:800;">WON</span>' : isDraw ? '<span style="color:var(--gold); font-weight:800;">DRAW</span>' : '<span style="color:var(--red); font-weight:800;">LOST</span>') : '';
 
-    ${!currentProfile.twitchId ? `<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:10px; font-size:12px; color:#fca5a5; margin-bottom:14px;">⚠️ Twitch ID add karo profile mein — tournament participation ke liye zaroori hai</div>` : ''}
+  let waLink = '';
+  if (type === 'fixture' && opp && opp.phone) {
+    const cleanPhone = opp.phone.replace(/\D/g, '');
+    const msg = encodeURIComponent(`Bro we are having our match today in ${m.tournamentName || 'Tournament'}.`);
+    waLink = `<a href="https://wa.me/${cleanPhone}?text=${msg}" target="_blank" class="wa-icon">💬</a>`;
+  }
 
-    ${t.status === 'completed' ? `<div style="text-align:center; padding:20px; color:var(--muted);">🏁 Tournament completed</div>` : ''}
-    ${t.status === 'cancelled' ? `<div style="text-align:center; padding:20px; color:#fca5a5;">❌ Tournament cancelled</div>` : ''}
+  let uploadBtn = '';
+  if (type === 'fixture') {
+    if (m.resultScreenshot) {
+      uploadBtn = `<button class="btn btn-success btn-sm" style="width:100%; margin-top:8px;" onclick="viewPlayerScreenshot('${m.resultScreenshot}')">✅ Result Uploaded (View)</button>`;
+    } else {
+      uploadBtn = `<button class="btn btn-outline btn-sm" style="width:100%; margin-top:8px; border-color:var(--gold); color:var(--gold);" onclick="uploadMatchScreenshot('${m.id}')">📸 Upload Result Screenshot</button>`;
+    }
+  }
 
-    ${existingReg ? `
-      <div style="text-align:center; padding:16px; background:${existingReg.status === 'pending' ? 'rgba(251,191,36,0.1)' : existingReg.status === 'denied' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)'}; border:1px solid ${existingReg.status === 'pending' ? 'rgba(251,191,36,0.3)' : existingReg.status === 'denied' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}; border-radius:12px; color:${existingReg.status === 'pending' ? '#fcd34d' : existingReg.status === 'denied' ? '#fca5a5' : '#6ee7b7'}; font-weight:600;">
-        ${existingReg.status === 'pending' ? '⏳ Payment verification pending' : existingReg.status === 'denied' ? '❌ Registration denied' : '✅ You are registered'}
-      </div>
-      <button class="btn btn-danger" style="margin-top:12px;" onclick="unregisterTournament('${t.id}')">Cancel Registration</button>
-    ` : (t.status === 'open' && slotsLeft > 0 && currentProfile.twitchId) ? `
-      <div class="form-group">
-        <label>Your eFootball In-Game ID</label>
-        <input type="text" id="regGameId" placeholder="e.g. ProGamer_123">
-      </div>
-
-      ${isFree ? `
-        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:10px; font-size:12px; color:#6ee7b7; margin-bottom:14px;">🎁 Ye tournament FREE hai — koi payment screenshot zaroori nahi</div>
-      ` : `
-        <div class="form-group">
-          <label>Payment Screenshot <span class="req">*</span></label>
-          <div class="screenshot-upload" onclick="document.getElementById('screenshotInput').click()">
-            <div class="screenshot-preview" id="screenshotPreview">📷</div>
-            <div style="flex:1;">
-              <div style="font-size:13px; font-weight:700; margin-bottom:2px;">Upload payment screenshot</div>
-              <div style="font-size:11px; color:var(--muted);">Rs ${t.entryFee} ka payment karke screenshot upload karo</div>
-            </div>
-          </div>
-          <input type="file" id="screenshotInput" accept="image/*" style="display:none;" onchange="handleScreenshotSelect(event)">
-          <div style="font-size:11px; color:#fcd34d; margin-top:8px;">💳 Payment karo: JazzCash/Easypaisa 03XX-XXXXXXX (ya jo bhi admin ne set kiya ho) aur screenshot upload karo</div>
+  return `
+    <div class="match-card">
+      <div class="match-header"><span>${m.roundName} ${m.group ? `(Group ${m.group})` : ''}</span><span>${m.stage.toUpperCase()}</span></div>
+      <div class="match-players">
+        <div class="match-p1 ${isWinner ? 'match-winner' : ''}">
+          ${isP1 ? 'You' : escapeHtml(opp?.name || 'TBD')}
+          ${(isP1 ? m.player1 : opp)?.teamLogo ? `<span class="match-team"><img src="${(isP1 ? m.player1 : opp).teamLogo}" referrerpolicy="no-referrer"> ${escapeHtml((isP1 ? m.player1 : opp).teamName)}</span>` : ''}
         </div>
-      `}
+        ${type === 'result' ? `<div class="match-score">${myScore} - ${oppScore}</div>` : '<div class="match-score">VS</div>'}
+        <div class="match-p2 ${!isWinner && type==='result' && !isDraw ? 'match-winner' : ''}">
+          ${!isP1 ? 'You' : escapeHtml(opp?.name || 'TBD')}
+          ${(!isP1 ? m.player2 : opp)?.teamLogo ? `<span class="match-team"><img src="${(!isP1 ? m.player2 : opp).teamLogo}" referrerpolicy="no-referrer"> ${escapeHtml((!isP1 ? m.player2 : opp).teamName)}</span>` : ''}
+        </div>
+      </div>
+      ${type === 'fixture' && opp ? `
+        <div style="font-size:11px; text-align:center; color:var(--neon2); margin-top:8px; display:flex; align-items:center; justify-content:center;">
+          Opponent Game ID: <strong>${escapeHtml(opp.gameId)}</strong> ${waLink}
+        </div>
+      ` : ''}
+      ${type === 'result' ? `<div style="font-size:11px; text-align:center; margin-top:8px;">${resultText}</div>` : ''}
+      ${uploadBtn}
+    </div>
+  `;
+}
 
-      <button class="btn btn-primary" onclick="registerTournament('${t.id}', ${isFree}, ${t.entryFee || 0})">
-        ${isFree ? '🚀 Register Now (FREE)' : '🚀 Submit for Verification — Rs ' + t.entryFee}
-      </button>
-    ` : (t.status === 'open' && slotsLeft <= 0) ? `
-      <div style="text-align:center; padding:16px; color:#fcd34d;">⚠️ Slots full</div>
-    ` : ''}
+async function uploadMatchScreenshot(matchId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    showToast('⏳ Uploading screenshot...');
+    try {
+      const base64 = await fileToBase64(file, 600, 0.7);
+      await updateDoc(doc(db, 'matches', matchId), { resultScreenshot: base64 });
+      showToast('✅ Result uploaded! Admin will verify.');
+    } catch(err) {
+      console.error(err);
+      showToast('❌ Upload failed', true);
+    }
+  };
+  input.click();
+}
+window.uploadMatchScreenshot = uploadMatchScreenshot;
 
-    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
+function viewPlayerScreenshot(base64) {
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">📸 Match Result</div>
+    <div style="border-radius:12px; overflow:hidden; border:1px solid var(--border); max-height:60vh; display:flex; align-items:center; justify-content:center; background:#000; margin-top:16px;">
+      <img src="${base64}" style="max-width:100%; max-height:60vh; object-fit:contain;">
+    </div>
+    <button class="btn btn-outline" style="margin-top:14px;" onclick="closeModal()">Close</button>
   `;
   document.getElementById('modal').classList.add('show');
 }
-window.openTournament = openTournament;
+window.viewPlayerScreenshot = viewPlayerScreenshot;
 
-// ============ SCREENSHOT SELECT ============
-async function handleScreenshotSelect(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 3 * 1024 * 1024) { showToast('❌ Screenshot 3MB se chota hona chahiye', true); return; }
-  try {
-    selectedScreenshotBase64 = await fileToBase64(file, 500, 0.7);
-    document.getElementById('screenshotPreview').innerHTML = `<img src="${selectedScreenshotBase64}">`;
-  } catch(err) { showToast('❌ Screenshot load nahi ho saki', true); }
-}
-window.handleScreenshotSelect = handleScreenshotSelect;
-
-// ============ REGISTER TOURNAMENT ============
-async function registerTournament(id, isFree, amount) {
-  const gameId = document.getElementById('regGameId').value.trim();
-  if (!gameId) { showToast('❌ Game ID required', true); return; }
-
-  if (!isFree && !selectedScreenshotBase64) {
-    showToast('❌ Payment screenshot upload karo', true);
+// --- MEMBER STANDINGS LOGIC ---
+async function renderMyStandings() {
+  const el = document.getElementById('myStandings');
+  const activeTournaments = allMyMatches.filter(m => m.stage === 'group').map(m => m.tournamentId);
+  const uniqueTids = [...new Set(activeTournaments)];
+  
+  if (uniqueTids.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="ico">📊</div><p>Koi group stage data nahi hai</p></div>`;
     return;
   }
 
-  const status = isFree ? 'approved' : 'pending';
-  const t = allTournaments.find(x => x.id === id);
+  let html = '';
+  for (const tid of uniqueTids) {
+    const t = allTournaments.find(x => x.id === tid);
+    if (!t) continue;
+    const matchesSnap = await getDocs(query(collection(db, 'matches'), where('tournamentId', '==', tid), where('stage', '==', 'group')));
+    const matches = matchesSnap.docs.map(d => d.data());
+    const table = calculateStandings(matches);
+    
+    html += `<h3 style="font-size:14px; font-weight:700; margin:16px 0 8px; color:var(--neon2);">${escapeHtml(t.name)}</h3>`;
+    
+    for (const [gName, players] of Object.entries(table)) {
+      html += `<div style="font-size:12px; font-weight:700; margin-bottom:4px;">Group ${gName}</div>`;
+      html += renderStandingsTable(players, 2);
+    }
+  }
+  el.innerHTML = html;
+}
 
-  try {
-    await addDoc(collection(db, 'registrations'), {
-      tournamentId: id,
-      tournamentName: t.name,
-      userId: currentUser.uid,
-      name: currentProfile.name,
-      cnic: currentProfile.cnic,
-      college: currentProfile.college,
-      phone: currentProfile.phone,
-      twitchId: currentProfile.twitchId,
-      gameId,
-      amount: amount,
-      isFree: isFree,
-      paymentScreenshot: isFree ? null : selectedScreenshotBase64,
-      status: status,
-      registeredAt: serverTimestamp(),
-      verifiedAt: isFree ? serverTimestamp() : null
+function calculateStandings(matches) {
+  const groups = {};
+  matches.forEach(m => {
+    if (!m.group) return;
+    if (!groups[m.group]) groups[m.group] = {};
+    
+    [m.player1, m.player2].forEach(p => {
+      if (!p || !groups[m.group][p.userId]) {
+        if (p) groups[m.group][p.userId] = { userId: p.userId, name: p.name, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 };
+      }
     });
 
-    if (isFree) {
-      await updateDoc(doc(db, 'tournaments', id), { joined: (t.joined || 0) + 1 });
+    if (m.status === 'completed') {
+      const p1 = groups[m.group][m.player1.userId];
+      const p2 = groups[m.group][m.player2.userId];
+      p1.p++; p2.p++;
+      p1.gf += m.score1; p1.ga += m.score2; p1.gd = p1.gf - p1.ga;
+      p2.gf += m.score2; p2.ga += m.score1; p2.gd = p2.gf - p2.ga;
+      
+      if (m.score1 > m.score2) { p1.w++; p1.pts+=3; p2.l++; }
+      else if (m.score1 < m.score2) { p2.w++; p2.pts+=3; p1.l++; }
+      else { p1.d++; p2.d++; p1.pts++; p2.pts++; }
     }
+  });
 
-    closeModal();
+  for (const g in groups) {
+    const arr = Object.values(groups[g]);
+    arr.sort((a, b) => {
+      if (b.pts !== a.pts) return b.pts - a.pts;
+      if (b.gd !== a.gd) return b.gd - a.gd;
+      if (b.gf !== a.gf) return b.gf - a.gf;
+      return 0;
+    });
+    groups[g] = arr;
+  }
+  return groups;
+}
 
-    if (isFree) {
-      showToast('✅ Registration confirmed!');
+function renderStandingsTable(players, qualifySpots) {
+  return `
+    <table class="standings-table">
+      <thead><tr><th>#</th><th>Player</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead>
+      <tbody>
+        ${players.map((p, idx) => `
+          <tr class="${idx < qualifySpots ? 'qualify' : ''}">
+            <td>${idx + 1}</td>
+            <td>${escapeHtml(p.name)}</td>
+            <td>${p.p}</td><td>${p.w}</td><td>${p.d}</td><td>${p.l}</td>
+            <td>${p.gd > 0 ? '+'+p.gd : p.gd}</td>
+            <td><strong>${p.pts}</strong></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ============ ADMIN BRACKET MANAGEMENT ============
+async function manageBracket(tid) {
+  activeBracketTournamentId = tid;
+  const t = allTournaments.find(x => x.id === tid);
+  currentBracketData.tournament = t;
+  document.getElementById('bracketTitle').textContent = t.name;
+  adminGo('bracket');
+  
+  const container = document.getElementById('bracketContainer');
+  const btn = document.getElementById('btnGenerateStage');
+  container.innerHTML = `<div class="empty"><div class="ico">⏳</div><p>Loading...</p></div>`;
+
+  const matchesSnap = await getDocs(query(collection(db, 'matches'), where('tournamentId', '==', tid)));
+  const matches = matchesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  currentBracketData.matches = matches;
+
+  if (matches.length === 0) {
+    btn.style.display = 'block';
+    btn.textContent = '🎲 Generate Groups/Knockout';
+    btn.onclick = () => generateInitialStage(tid);
+    container.innerHTML = `
+      <div style="text-align:center; padding:40px 20px;">
+        <div style="font-size:48px; margin-bottom:16px;">🎲</div>
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Tournament Not Started</h3>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:20px;">Players are registered. Generate the bracket to start.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const groupMatches = matches.filter(m => m.stage === 'group');
+  const koMatches = matches.filter(m => m.stage === 'knockout');
+  
+  if (groupMatches.length > 0 && koMatches.length === 0) {
+    const allGroupsDone = groupMatches.every(m => m.status === 'completed');
+    if (allGroupsDone) {
+      btn.style.display = 'block';
+      btn.textContent = '🏆 Generate Knockouts';
+      btn.onclick = () => generateKnockoutStage(tid);
     } else {
-      showPaymentPendingPopup();
+      btn.style.display = 'none';
     }
+  } else {
+    btn.style.display = 'none';
+  }
+
+  renderAdminBracketHTML(groupMatches, koMatches);
+}
+window.manageBracket = manageBracket;
+
+function renderAdminBracketHTML(groupMatches, koMatches) {
+  let html = '';
+  
+  if (groupMatches.length > 0) {
+    html += `<div class="section-title"><h2>Group Stage</h2></div>`;
+    const table = calculateStandings(groupMatches);
+    
+    for (const [gName, players] of Object.entries(table)) {
+      html += `<div style="font-size:12px; font-weight:700; margin:10px 0 4px;">Group ${gName}</div>`;
+      html += renderStandingsTable(players, 2);
+    }
+
+    // Sort group matches by matchday
+    groupMatches.sort((a, b) => {
+        const dayA = a.matchday || 0;
+        const dayB = b.matchday || 0;
+        if (dayA !== dayB) return dayA - dayB;
+        const groupA = a.group || '';
+        const groupB = b.group || '';
+        if (groupA !== groupB) return groupA.localeCompare(groupB);
+        return (a.matchNumber || 0) - (b.matchNumber || 0);
+    });
+
+    const groupedMatches = {};
+    groupMatches.forEach(m => {
+      const key = `Group ${m.group} - Matchday ${m.matchday}`;
+      if (!groupedMatches[key]) groupedMatches[key] = [];
+      groupedMatches[key].push(m);
+    });
+
+    html += `<div style="font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--neon2);">Group Matches</div>`;
+    for (const [key, ms] of Object.entries(groupedMatches)) {
+      html += `<div style="font-size:11px; font-weight:600; color:var(--muted); margin:8px 0 4px;">${key}</div>`;
+      html += ms.map(m => matchCardAdminHTML(m)).join('');
+    }
+  }
+
+  if (koMatches.length > 0) {
+    html += `<div class="section-title"><h2>Knockout Stage</h2></div>`;
+    const roundsMap = {};
+    koMatches.forEach(m => {
+      const rName = m.roundName || `Round ${m.round}`;
+      if (!roundsMap[rName]) roundsMap[rName] = [];
+      roundsMap[rName].push(m);
+    });
+    
+    for (const [rName, ms] of Object.entries(roundsMap)) {
+      html += `<div style="font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--gold);">${rName}</div>`;
+      html += ms.map(m => matchCardAdminHTML(m)).join('');
+    }
+  }
+
+  document.getElementById('bracketContainer').innerHTML = html;
+}
+
+function matchCardAdminHTML(m) {
+  const isReady = m.status === 'ready';
+  const isCompleted = m.status === 'completed';
+  const p1 = m.player1?.name || 'TBD';
+  const p2 = m.player2?.name || 'TBD';
+  return `
+    <div class="match-card" ${isReady ? `onclick="openScoreEntry('${m.id}')" style="cursor:pointer; border-color:var(--neon); box-shadow: 0 0 10px rgba(124,58,237,0.2);"` : ''}>
+      <div class="match-header">
+        <span>${m.group ? 'Group '+m.group+' - ' : ''}${m.matchday ? 'MD'+m.matchday+' - ' : ''}Match ${m.matchNumber}</span>
+        <span>${isCompleted ? '✅ Done' : isReady ? '🔴 Ready to Play' : '⏳ Wait'}</span>
+      </div>
+      <div class="match-players">
+        <div class="match-p1 ${m.winnerId === m.player1?.userId ? 'match-winner' : ''}">
+          ${escapeHtml(p1)} 
+          ${m.player1?.teamLogo ? `<span class="match-team"><img src="${m.player1.teamLogo}" referrerpolicy="no-referrer"> ${escapeHtml(m.player1.teamName)}</span>` : ''}
+        </div>
+        ${isCompleted ? `<div class="match-score">${m.score1} - ${m.score2}</div>` : '<div class="match-score">VS</div>'}
+        <div class="match-p2 ${m.winnerId === m.player2?.userId ? 'match-winner' : ''}">
+          ${escapeHtml(p2)}
+          ${m.player2?.teamLogo ? `<span class="match-team"><img src="${m.player2.teamLogo}" referrerpolicy="no-referrer"> ${escapeHtml(m.player2.teamName)}</span>` : ''}
+        </div>
+      </div>
+      ${isReady ? `<div style="text-align:center; margin-top:8px;"><span style="font-size:10px; background:var(--neon); padding:4px 8px; border-radius:10px; color:white;">Tap to Enter Score</span></div>` : ''}
+      ${m.resultScreenshot ? `<div style="text-align:center; margin-top:8px;"><span style="font-size:10px; background:rgba(16,185,129,0.2); color:#6ee7b7; padding:4px 8px; border-radius:10px;">📸 Result Uploaded by Player</span></div>` : ''}
+    </div>
+  `;
+}
+
+async function generateInitialStage(tid) {
+  const t = allTournaments.find(x => x.id === tid);
+  const format = t.format || 'Group16_4';
+  
+  if (!confirm(`Generate ${format} bracket? Ye action undo nahi ho sakta.`)) return;
+  showToast('⏳ Generating...');
+
+  try {
+    const regsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', tid), where('status', '==', 'approved')));
+    let players = regsSnap.docs.map(d => {
+      const data = d.data();
+      return { userId: data.userId, name: data.name, gameId: data.gameId, phone: data.phone, teamName: data.teamName, teamLogo: data.teamLogo };
+    });
+
+    if (players.length < 2) { showToast('❌ Need at least 2 players', true); return; }
+    players.sort(() => Math.random() - 0.5);
+
+    let batch = writeBatch(db);
+    
+    if (format.includes('Group')) {
+      let numGroups = format.includes('16') ? (format.includes('2G') ? 2 : 4) : 2;
+      let playersPerGroup = players.length / numGroups;
+      const groupNames = ['A', 'B', 'C', 'D'];
+      
+      let groups = {};
+      for (let i=0; i<numGroups; i++) groups[groupNames[i]] = [];
+
+      players.forEach((p, idx) => {
+        groups[groupNames[Math.floor(idx / playersPerGroup)]].push(p);
+      });
+
+      let globalMatchNum = 1;
+      for (const [gName, gPlayers] of Object.entries(groups)) {
+        const n = gPlayers.length;
+        const rounds = n % 2 === 0 ? n - 1 : n;
+        const half = Math.floor(n / 2);
+        const arr = [...gPlayers];
+        if (n % 2 !== 0) arr.push(null); 
+
+        for (let round = 1; round <= rounds; round++) {
+          for (let i = 0; i < half; i++) {
+            const p1 = arr[i];
+            const p2 = arr[arr.length - 1 - i];
+            
+            if (p1 && p2) {
+              const matchId = `${tid}_G_${gName}_MD${round}_M${i}`;
+              batch.set(doc(db, 'matches', matchId), {
+                id: matchId, tournamentId: tid, stage: 'group', group: gName,
+                round: 1, roundName: 'Group Stage', matchday: round, matchNumber: globalMatchNum++,
+                player1: p1, player2: p2,
+                score1: 0, score2: 0, winnerId: null, status: 'ready', nextMatchId: null, tournamentName: t.name
+              });
+            }
+          }
+          arr.splice(1, 0, arr.pop());
+        }
+      }
+      batch.update(doc(db, 'tournaments', tid), { status: 'group_stage' });
+      
+    } else {
+      let size = 2;
+      while (size < players.length) size *= 2;
+      const numRounds = Math.log2(size);
+      while (players.length < size) players.push(null); 
+
+      for (let r = 1; r <= numRounds; r++) {
+        const matchesInRound = size / Math.pow(2, r);
+        for (let m = 1; m <= matchesInRound; m++) {
+          const matchId = `${tid}_R${r}_M${m}`;
+          let p1 = null, p2 = null;
+          if (r === 1) {
+            p1 = players[(m - 1) * 2];
+            p2 = players[(m - 1) * 2 + 1];
+          }
+          const nextMatchId = r < numRounds ? `${tid}_R${r+1}_M${Math.ceil(m/2)}` : null;
+          
+          let status = 'pending';
+          if (p1 && p2) status = 'ready';
+          else if (p1 || p2) status = 'completed';
+
+          let rName = `Round ${r}`;
+          if (r === numRounds) rName = 'Final';
+          else if (r === numRounds - 1) rName = 'Semi Final';
+          else if (r === numRounds - 2) rName = 'Quarter Final';
+
+          batch.set(doc(db, 'matches', matchId), {
+            id: matchId, tournamentId: tid, stage: 'knockout', group: null,
+            round: r, roundName: rName, matchNumber: m,
+            player1: p1, player2: p2, score1: 0, score2: 0, tournamentName: t.name,
+            winnerId: status === 'completed' ? (p1 ? p1.userId : p2.userId) : null,
+            status: status, nextMatchId: nextMatchId
+          });
+        }
+      }
+      batch.update(doc(db, 'tournaments', tid), { status: 'knockout_stage' });
+    }
+
+    await batch.commit();
+    showToast('✅ Bracket Generated!');
+    manageBracket(tid);
+
   } catch(err) {
     console.error(err);
-    showToast('❌ Registration failed', true);
+    showToast('❌ Failed: ' + err.message, true);
   }
 }
-window.registerTournament = registerTournament;
+window.generateInitialStage = generateInitialStage;
 
-// ============ PAYMENT PENDING POPUP ============
-function showPaymentPendingPopup() {
-  document.getElementById('modalBody').innerHTML = `
-    <div style="text-align:center; padding:20px 0;">
-      <div style="font-size:64px; margin-bottom:16px;">⏳</div>
-      <div class="modal-title" style="text-align:center;">Payment Verification Pending</div>
-      <div class="modal-sub" style="text-align:center; margin-top:8px;">
-        Tumhara payment screenshot admin ko bhej diya gaya hai.<br>
-        Admin verify karega toh notification milega.<br><br>
-        <strong style="color:var(--neon2);">Thoda wait karo — verify hone pe tum "My Registrations" mein dekh sakte ho.</strong>
-      </div>
-      <button class="btn btn-primary" style="margin-top:20px;" onclick="closeModal();go('matches',document.querySelectorAll('.nav-item')[2])">📋 View My Registrations</button>
-      <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">OK, Got it</button>
-    </div>
-  `;
-  document.getElementById('modal').classList.add('show');
-}
-window.showPaymentPendingPopup = showPaymentPendingPopup;
+async function generateKnockoutStage(tid) {
+  const t = allTournaments.find(x => x.id === tid);
+  const format = t.format || 'Group16_4';
+  
+  if (!confirm(`Generate Knockouts based on group standings?`)) return;
+  showToast('⏳ Generating Knockouts...');
 
-async function unregisterTournament(tid) {
-  if (!confirm('Are you sure you want to cancel this registration?')) return;
   try {
-    const q = await getDocs(query(
-      collection(db, 'registrations'),
-      where('tournamentId', '==', tid),
-      where('userId', '==', currentUser.uid)
-    ));
-    for (const d of q.docs) {
-      const data = d.data();
-      await deleteDoc(doc(db, 'registrations', d.id));
-      if (data.status === 'approved') {
-        const t = allTournaments.find(x => x.id === tid);
-        if (t) await updateDoc(doc(db, 'tournaments', tid), { joined: Math.max(0, (t.joined || 1) - 1) });
+    const matchesSnap = await getDocs(query(collection(db, 'matches'), where('tournamentId', '==', tid), where('stage', '==', 'group')));
+    const groupMatches = matchesSnap.docs.map(d => d.data());
+    const table = calculateStandings(groupMatches);
+
+    let qfTeams = [];
+    let sfTeams = [];
+
+    if (format === 'Group16_4') {
+      qfTeams = [
+        table['A'][0], table['B'][1], // QF1
+        table['B'][0], table['A'][1], // QF2
+        table['C'][0], table['D'][1], // QF3
+        table['D'][0], table['C'][1]  // QF4
+      ];
+    } else if (format === 'Group16_2G') {
+      qfTeams = [
+        table['A'][0], table['B'][3],
+        table['B'][0], table['A'][3],
+        table['A'][1], table['B'][2],
+        table['B'][1], table['A'][2]
+      ];
+    } else if (format === 'Group8_2') {
+      sfTeams = [
+        table['A'][0], table['B'][1],
+        table['B'][0], table['A'][1]
+      ];
+    } else {
+      showToast('❌ Unsupported format for KO generation', true); return;
+    }
+
+    let batch = writeBatch(db);
+    let baseId = `${tid}_KO`;
+    let players = qfTeams.length > 0 ? qfTeams : sfTeams;
+    let size = players.length; // 8 or 4
+    let numRounds = Math.log2(size); // 3 or 2
+
+    // Fetch full player details (including teams) for these qualified players
+    const allRegsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', tid)));
+    const allRegs = allRegsSnap.docs.map(d => d.data());
+    
+    // Enhance player objects with team info
+    const enhancedPlayers = players.map(p => {
+      const reg = allRegs.find(r => r.userId === p.userId);
+      return {
+        userId: p.userId, name: p.name, gameId: p.gameId, phone: p.phone,
+        teamName: reg?.teamName || '', teamLogo: reg?.teamLogo || ''
+      };
+    });
+
+    for (let r = 1; r <= numRounds; r++) {
+      const matchesInRound = size / Math.pow(2, r);
+      for (let m = 1; m <= matchesInRound; m++) {
+        const matchId = `${baseId}_R${r}_M${m}`;
+        let p1 = null, p2 = null;
+        if (r === 1) {
+          p1 = enhancedPlayers[(m - 1) * 2];
+          p2 = enhancedPlayers[(m - 1) * 2 + 1];
+        }
+        const nextMatchId = r < numRounds ? `${baseId}_R${r+1}_M${Math.ceil(m/2)}` : null;
+        
+        let rName = `Round ${r}`;
+        if (r === numRounds) rName = 'Final';
+        else if (r === numRounds - 1) rName = 'Semi Final';
+        else if (r === numRounds - 2) rName = 'Quarter Final';
+
+        batch.set(doc(db, 'matches', matchId), {
+          id: matchId, tournamentId: tid, stage: 'knockout', group: null,
+          round: r, roundName: rName, matchNumber: m,
+          player1: p1, player2: p2, score1: 0, score2: 0, tournamentName: t.name,
+          winnerId: null, status: 'ready', nextMatchId: nextMatchId, isThirdPlace: false
+        });
       }
     }
-    closeModal();
-    showToast('✅ Registration cancelled');
-  } catch(err) { showToast('❌ Failed', true); }
+    
+    // 3rd Place Match
+    batch.set(doc(db, 'matches', `${baseId}_R${numRounds}_M2`), {
+      id: `${baseId}_R${numRounds}_M2`, tournamentId: tid, stage: 'knockout', group: null,
+      round: numRounds, roundName: '3rd Place Match', matchNumber: 2,
+      player1: null, player2: null, score1: 0, score2: 0, tournamentName: t.name,
+      winnerId: null, status: 'pending', nextMatchId: null, isThirdPlace: true
+    });
+
+    batch.update(doc(db, 'tournaments', tid), { status: 'knockout_stage' });
+    await batch.commit();
+    showToast('✅ Knockouts Generated!');
+    manageBracket(tid);
+
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed: ' + err.message, true);
+  }
 }
-window.unregisterTournament = unregisterTournament;
+window.generateKnockoutStage = generateKnockoutStage;
 
-// ============ NAV ============
-function go(page, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page)?.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (el) el.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function adminGenerateNextStage() {
+  if (!activeBracketTournamentId) return;
+  const t = allTournaments.find(x => x.id === activeBracketTournamentId);
+  if (t.format.includes('Group') && currentBracketData.matches.filter(m => m.stage === 'group').every(m => m.status === 'completed')) {
+    if (currentBracketData.matches.filter(m => m.stage === 'knockout').length === 0) {
+      generateKnockoutStage(activeBracketTournamentId);
+    }
+  } else {
+    generateInitialStage(activeBracketTournamentId);
+  }
 }
-window.go = go;
+window.adminGenerateNextStage = adminGenerateNextStage;
 
-// ============ EF HUB ============
-function reloadEfhub() {
-  const f = document.getElementById('efhubFrame');
-  if (f) f.src = f.src;
-  showToast('🔄 Reloading EF Hub...');
-}
-window.reloadEfhub = reloadEfhub;
+function openScoreEntry(matchId) {
+  getDoc(doc(db, 'matches', matchId)).then(snap => {
+    if (!snap.exists()) return;
+    const m = snap.data();
+    const isKO = m.stage === 'knockout';
+    const p1Name = m.player1 ? m.player1.name : 'TBD';
+    const p2Name = m.player2 ? m.player2.name : 'TBD';
+    const p1Id = m.player1 ? m.player1.userId : '';
+    const p2Id = m.player2 ? m.player2.userId : '';
 
-function renderProfilePage() {
-  const u = currentProfile;
-  if (!u) return;
-  document.getElementById('profileAvatar').innerHTML = u.profilePic ? `<img src="${u.profilePic}">` : u.name.charAt(0).toUpperCase();
-  document.getElementById('profileName').textContent = u.name;
-  document.getElementById('profileCollege').textContent = u.college;
-
-  document.getElementById('profileInfo').innerHTML = `
-    <div class="info-row"><span class="info-label">CNIC</span><span class="info-value">${escapeHtml(u.cnic)}</span></div>
-    <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${escapeHtml(u.phone)}</span></div>
-    <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college)}</span></div>
-    <div class="info-row"><span class="info-label">Location</span><span class="info-value">${escapeHtml(u.location)}</span></div>
-    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon2);">Link</a>` : 'Not set'}</span></div>
-  `;
-}
-
-function editProfile() {
-  const u = currentProfile;
-  document.getElementById('modalBody').innerHTML = `
-    <div class="modal-title">✏️ Edit Profile</div>
-    <div class="modal-sub">Apni info update karo</div>
-    <div class="form-group"><label>Profile Picture</label>
-      <div class="pic-upload">
-        <div class="pic-preview" id="editPicPreview" onclick="document.getElementById('editPicInput').click()">
-          ${u.profilePic ? `<img src="${u.profilePic}">` : '📷'}
+    document.getElementById('modalBody').innerHTML = `
+      <div class="modal-title">✏️ Enter Score</div>
+      <div class="modal-sub">${m.roundName} ${m.group ? '(Group '+m.group+')' : ''}</div>
+      
+      ${m.resultScreenshot ? `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px; color:var(--gold); margin-bottom:4px;">Player uploaded result:</div>
+          <div style="border-radius:12px; overflow:hidden; border:1px solid var(--border); max-height:200px; display:flex; align-items:center; justify-content:center; background:#000; cursor:pointer;" onclick="viewPlayerScreenshot('${m.resultScreenshot}')">
+            <img src="${m.resultScreenshot}" style="max-width:100%; max-height:200px; object-fit:contain;">
+          </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('editPicInput').click()">Change</button>
+      ` : ''}
+
+      <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; margin-bottom:20px;">
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:700;">${escapeHtml(p1Name)}</div>
+          <div style="font-size:11px; color:var(--gold);">${m.player1?.teamName ? `<img src="${m.player1.teamLogo}" referrerpolicy="no-referrer" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;margin-right:2px;"> ${m.player1.teamName}` : ''}</div>
+          <input type="number" id="score1" value="${m.score1}" min="0" style="margin-top:10px; text-align:center; font-size:24px; font-weight:800; padding:10px;">
+        </div>
+        <div style="font-size:20px; font-weight:800; color:var(--gold);">-</div>
+        <div style="text-align:center;">
+          <div style="font-size:14px; font-weight:700;">${escapeHtml(p2Name)}</div>
+          <div style="font-size:11px; color:var(--gold);">${m.player2?.teamName ? `<img src="${m.player2.teamLogo}" referrerpolicy="no-referrer" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;margin-right:2px;"> ${m.player2.teamName}` : ''}</div>
+          <input type="number" id="score2" value="${m.score2}" min="0" style="margin-top:10px; text-align:center; font-size:24px; font-weight:800; padding:10px;">
+        </div>
       </div>
-      <input type="file" id="editPicInput" accept="image/*" style="display:none;" onchange="handleEditPic(event)">
-    </div>
-    <div class="form-group"><label>Name</label><input type="text" id="editName" value="${escapeHtml(u.name)}"></div>
-    <div class="form-group"><label>College</label><input type="text" id="editCollege" value="${escapeHtml(u.college)}"></div>
-    <div class="form-group"><label>Location</label><input type="text" id="editLocation" value="${escapeHtml(u.location)}"></div>
-    <div class="form-group"><label>Twitch ID</label><input type="url" id="editTwitch" value="${escapeHtml(u.twitchId || '')}" placeholder="https://twitch.tv/yourname"></div>
-    <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
-    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
-  `;
-  window._editPicBase64 = null;
-  document.getElementById('modal').classList.add('show');
-}
-window.editProfile = editProfile;
+      
+      ${isKO ? `
+      <div id="penaltyWinnerDiv" style="display:none; margin-top:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:12px; border-radius:12px;">
+        <label style="font-size:12px; font-weight:700; color:#fca5a5; display:block; margin-bottom:8px;">⚠️ Knockout Draw! Select Penalty Winner:</label>
+        <select id="penaltyWinner" style="width:100%; padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border);">
+          <option value="">-- Select Winner --</option>
+          <option value="${p1Id}">${escapeHtml(p1Name)}</option>
+          <option value="${p2Id}">${escapeHtml(p2Name)}</option>
+        </select>
+      </div>
+      ` : ''}
 
-async function handleEditPic(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { showToast('❌ Image 2MB se choti honi chahiye', true); return; }
-  const base64 = await fileToBase64(file, 400, 0.75);
-  window._editPicBase64 = base64;
-  document.getElementById('editPicPreview').innerHTML = `<img src="${base64}">`;
+      <button class="btn btn-primary" onclick="saveMatchScore('${matchId}', ${isKO})">Save Score</button>
+      <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+    `;
+    
+    if (isKO) {
+      const s1 = document.getElementById('score1');
+      const s2 = document.getElementById('score2');
+      const pDiv = document.getElementById('penaltyWinnerDiv');
+      const checkDraw = () => {
+        if (parseInt(s1.value) === parseInt(s2.value)) pDiv.style.display = 'block';
+        else pDiv.style.display = 'none';
+      };
+      s1.addEventListener('input', checkDraw);
+      s2.addEventListener('input', checkDraw);
+    }
+    
+    document.getElementById('modal').classList.add('show');
+  });
 }
-window.handleEditPic = handleEditPic;
+window.openScoreEntry = openScoreEntry;
 
-async function saveProfile() {
-  const name = document.getElementById('editName').value.trim();
-  const college = document.getElementById('editCollege').value.trim();
-  const location_ = document.getElementById('editLocation').value.trim();
-  const twitch = document.getElementById('editTwitch').value.trim();
-  if (!name || !college || !location_) { showToast('❌ All fields required', true); return; }
+async function saveMatchScore(matchId, isKO) {
+  const s1 = parseInt(document.getElementById('score1').value);
+  const s2 = parseInt(document.getElementById('score2').value);
+  if (isNaN(s1) || isNaN(s2)) { showToast('❌ Enter valid scores', true); return; }
+
+  const matchDoc = await getDoc(doc(db, 'matches', matchId));
+  if (!matchDoc.exists()) return;
+  const m = matchDoc.data();
+
+  let winnerId = null;
+  let winnerPlayer = null;
+
+  if (s1 > s2) { winnerId = m.player1.userId; winnerPlayer = m.player1; }
+  else if (s2 > s1) { winnerId = m.player2.userId; winnerPlayer = m.player2; }
+  else {
+    if (isKO) {
+      const pWinner = document.getElementById('penaltyWinner').value;
+      if (!pWinner) { showToast('❌ Select penalty winner!', true); return; }
+      winnerId = pWinner;
+      winnerPlayer = pWinner === m.player1.userId ? m.player1 : m.player2;
+    } else {
+      winnerId = 'draw';
+    }
+  }
+
   try {
-    const updates = { name, college, location: location_, twitchId: twitch };
-    if (window._editPicBase64) updates.profilePic = window._editPicBase64;
-    await updateDoc(doc(db, 'users', currentUser.uid), updates);
-    currentProfile = { ...currentProfile, ...updates };
+    const batch = writeBatch(db);
+    batch.update(doc(db, 'matches', matchId), {
+      score1: s1, score2: s2, winnerId: winnerId, status: 'completed'
+    });
+
+    if (m.stage === 'knockout' && m.nextMatchId) {
+      const nextDoc = await getDoc(doc(db, 'matches', m.nextMatchId));
+      if (nextDoc.exists()) {
+        const nextM = nextDoc.data();
+        const isP1Empty = !nextM.player1;
+        const updateData = isP1Empty ? { player1: winnerPlayer } : { player2: winnerPlayer };
+        
+        const nextP1 = isP1Empty ? winnerPlayer : nextM.player1;
+        const nextP2 = !isP1Empty ? winnerPlayer : nextM.player2;
+        if (nextP1 && nextP2) updateData.status = 'ready';
+
+        batch.update(doc(db, 'matches', m.nextMatchId), updateData);
+      }
+      
+      // 3rd Place Logic
+      if (m.roundName === 'Semi Final') {
+        const loserPlayer = winnerId === m.player1.userId ? m.player2 : m.player1;
+        const thirdPlaceMatch = currentBracketData.matches.find(x => x.roundName === '3rd Place Match');
+        if (thirdPlaceMatch) {
+           const tpDoc = await getDoc(doc(db, 'matches', thirdPlaceMatch.id));
+           const tpM = tpDoc.data();
+           const isP1Empty = !tpM.player1;
+           const upd = isP1Empty ? { player1: loserPlayer } : { player2: loserPlayer };
+           const tpP1 = isP1Empty ? loserPlayer : tpM.player1;
+           const tpP2 = !isP1Empty ? loserPlayer : tpM.player2;
+           if (tpP1 && tpP2) upd.status = 'ready';
+           batch.update(doc(db, 'matches', thirdPlaceMatch.id), upd);
+        }
+      }
+    }
+
+    await batch.commit();
+    
+    if (m.stage === 'knockout' && m.roundName === 'Final') {
+       await updateDoc(doc(db, 'tournaments', m.tournamentId), { status: 'completed' });
+    }
+
     closeModal();
-    renderProfilePage();
-    renderUserHeader();
-    showToast('✅ Profile updated');
-  } catch(err) { showToast('❌ Update failed', true); }
+    showToast('✅ Score saved!');
+    manageBracket(m.tournamentId);
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed: ' + err.message, true);
+  }
 }
-window.saveProfile = saveProfile;
+window.saveMatchScore = saveMatchScore;
 
-function closeModal() { document.getElementById('modal').classList.remove('show'); }
-window.closeModal = closeModal;
-document.getElementById('modal').addEventListener('click', (e) => {
-  if (e.target.id === 'modal') closeModal();
-});
-
-/* ==================================================
-   ADMIN PANEL
-   ================================================== */
-
+// ============ REST OF ADMIN FUNCTIONS ============
 function showAdminLogin() {
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-title">🔐 Admin Login</div>
-    <div class="modal-sub">Enter admin CNIC & password</div>
-    <div class="form-group"><label>Admin CNIC</label><input type="text" id="adminCnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="adminPassword" placeholder="Admin password"></div>
-    <button class="btn btn-primary" onclick="doAdminLogin()">Login as Admin</button>
-    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
-    <div class="form-hint" style="margin-top:12px; text-align:center;">Sirf authorized admins ke liye</div>
+    <div class="form-group"><label>Admin CNIC</label><input type="text" id="adminCnic" maxlength="15"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="adminPassword"></div>
+    <button class="btn btn-primary" onclick="doAdminLogin()">Login</button>
+    <button class="btn btn-outline" onclick="closeModal()" style="margin-top:10px;">Cancel</button>
   `;
   document.getElementById('modal').classList.add('show');
   document.getElementById('adminCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
@@ -1373,30 +1801,24 @@ function showAdminLogin() {
 window.showAdminLogin = showAdminLogin;
 
 function doAdminLogin() {
-  const cnic = document.getElementById('adminCnic').value.trim();
-  const password = document.getElementById('adminPassword').value;
-  if (!cnic || !password) { showToast('❌ CNIC and password required', true); return; }
-  if (cnic !== ADMIN_CNIC || password !== ADMIN_PASSWORD) { showToast('❌ Invalid admin credentials', true); return; }
+  if (document.getElementById('adminCnic').value.trim() !== ADMIN_CNIC || document.getElementById('adminPassword').value !== ADMIN_PASSWORD) {
+    showToast('❌ Invalid credentials', true); return;
+  }
   adminUser = { cnic: ADMIN_CNIC };
   closeModal();
   document.getElementById('authScreen').classList.remove('active');
   document.getElementById('appScreen').style.display = 'none';
   document.getElementById('adminScreen').classList.add('active');
   loadAdminData();
-  showToast('✅ Welcome Admin');
+  showToast('✅ Admin Welcome');
 }
 window.doAdminLogin = doAdminLogin;
 
 function adminLogout() {
   adminUser = null;
   document.getElementById('adminScreen').classList.remove('active');
-  if (currentUser && currentProfile) {
-    document.getElementById('appScreen').style.display = 'block';
-    loadApp();
-  } else {
-    document.getElementById('appScreen').style.display = 'none';
-    document.getElementById('authScreen').classList.add('active');
-  }
+  if (currentUser && currentProfile) { document.getElementById('appScreen').style.display = 'block'; loadApp(); }
+  else { document.getElementById('authScreen').classList.add('active'); }
 }
 window.adminLogout = adminLogout;
 
@@ -1406,8 +1828,15 @@ window.switchToMember = switchToMember;
 function adminGo(page, el) {
   document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
   document.getElementById('admin-' + page)?.classList.add('active');
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  if (el) el.classList.add('active');
+  
+  if (el) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  } else if (page === 'tournaments') {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.admin-tab')[1].classList.add('active');
+  }
+
   if (page === 'dash') loadAdminData();
   if (page === 'tournaments') renderAdminTournaments();
   if (page === 'members') renderMembers();
@@ -1417,29 +1846,24 @@ function adminGo(page, el) {
 window.adminGo = adminGo;
 
 async function loadAdminData() {
-  if (adminSubscribed) return;
-  adminSubscribed = true;
-
+  if (adminSubscribed) return; adminSubscribed = true;
   onSnapshot(collection(db, 'users'), (snap) => {
     allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     document.getElementById('statUsers').textContent = allUsers.length;
     if (document.getElementById('admin-members').classList.contains('active')) renderMembers();
   });
-
   onSnapshot(collection(db, 'tournaments'), (snap) => {
     allTournaments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     document.getElementById('statTournaments').textContent = allTournaments.length;
-    document.getElementById('statLive').textContent = allTournaments.filter(t => t.status === 'live').length;
+    document.getElementById('statLive').textContent = allTournaments.filter(t => t.status === 'live' || t.status === 'group_stage' || t.status === 'knockout_stage').length;
     if (document.getElementById('admin-tournaments').classList.contains('active')) renderAdminTournaments();
   });
-
   onSnapshot(collection(db, 'registrations'), (snap) => {
     allRegistrations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     document.getElementById('statPending').textContent = allRegistrations.filter(r => r.status === 'pending').length;
     renderRecentRegs();
     if (document.getElementById('admin-registrations').classList.contains('active')) renderAdminRegistrations();
   });
-
   onSnapshot(query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20)), (snap) => {
     allAnnouncements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (document.getElementById('admin-announce').classList.contains('active')) renderAdminAnnouncements();
@@ -1449,48 +1873,31 @@ async function loadAdminData() {
 function renderRecentRegs() {
   const el = document.getElementById('recentRegs');
   const pending = allRegistrations.filter(r => r.status === 'pending').slice(0, 8);
-  if (pending.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">✅</div><p>Koi pending verification nahi</p></div>`; return; }
-  el.innerHTML = pending.map(r => regCardHTML(r, true)).join('');
+  el.innerHTML = pending.length === 0 ? `<div class="empty"><div class="ico">✅</div><p>No pending</p></div>` : pending.map(r => regCardHTML(r, true)).join('');
 }
 
-// ============ REGISTRATION CARD ============
 function regCardHTML(r, isRecent) {
   const t = allTournaments.find(x => x.id === r.tournamentId);
   const st = r.status || 'approved';
   const stLabel = { pending:'⏳ Pending', approved:'✅ Approved', denied:'❌ Denied' }[st];
   return `
     <div class="reg-card">
-      ${r.paymentScreenshot ? `
-        <div class="reg-screenshot" onclick="viewScreenshot('${r.id}')">
-          <img src="${r.paymentScreenshot}">
-        </div>
-      ` : `
-        <div class="reg-screenshot" style="font-size:11px; text-align:center; color:var(--muted);">
-          ${r.isFree ? '🎁<br>FREE' : '—'}
-        </div>
-      `}
+      ${r.paymentScreenshot ? `<div class="reg-screenshot" onclick="viewScreenshot('${r.id}')"><img src="${r.paymentScreenshot}"></div>` : `<div class="reg-screenshot">${r.isFree ? '🎁<br>FREE' : '—'}</div>`}
       <div class="reg-details">
-        <div class="reg-name">${escapeHtml(r.name || '—')} <span class="badge ${st}">${stLabel}</span></div>
-        <div class="reg-meta">${escapeHtml(r.cnic || '')} • ${escapeHtml(t?.name || 'Unknown')}</div>
-        <div class="reg-meta">Game ID: ${escapeHtml(r.gameId || '—')} ${r.amount ? '• Rs ' + r.amount : ''}</div>
-        ${!isRecent && st === 'pending' ? `
-          <div class="reg-actions">
-            <button class="btn btn-success btn-sm" onclick="promptVerify('${r.id}','approve')">✅ Verify</button>
-            <button class="btn btn-danger btn-sm" onclick="promptVerify('${r.id}','deny')">❌ Deny</button>
-          </div>
-        ` : ''}
+        <div class="reg-name">${escapeHtml(r.name)} <span class="badge ${st}">${stLabel}</span></div>
+        <div class="reg-meta">${escapeHtml(r.cnic)} • ${escapeHtml(t?.name || 'Unknown')}</div>
+        <div class="reg-meta">Game ID: ${escapeHtml(r.gameId)}</div>
+        <div class="reg-meta" style="color:var(--gold);">Team: ${r.teamLogo ? `<img src="${r.teamLogo}" referrerpolicy="no-referrer" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;">` : ''} ${escapeHtml(r.teamName || '—')}</div>
+        ${!isRecent && st === 'pending' ? `<div class="reg-actions"><button class="btn btn-success btn-sm" onclick="promptVerify('${r.id}','approve')">✅ Verify</button><button class="btn btn-danger btn-sm" onclick="promptVerify('${r.id}','deny')">❌ Deny</button></div>` : ''}
       </div>
     </div>
   `;
 }
-window.regCardHTML = regCardHTML;
 
 function viewScreenshot(rid) {
-  const r = allRegistrations.find(x => x.id === rid);
-  if (!r || !r.paymentScreenshot) return;
+  const r = allRegistrations.find(x => x.id === rid); if (!r) return;
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-title">💳 Payment Screenshot</div>
-    <div class="modal-sub">${escapeHtml(r.name)} • ${escapeHtml(r.cnic)} • Rs ${r.amount}</div>
+    <div class="modal-title">💳 Payment Proof</div>
     <div style="border-radius:12px; overflow:hidden; border:1px solid var(--border); max-height:60vh; display:flex; align-items:center; justify-content:center; background:#000;">
       <img src="${r.paymentScreenshot}" style="max-width:100%; max-height:60vh; object-fit:contain;">
     </div>
@@ -1500,70 +1907,40 @@ function viewScreenshot(rid) {
 }
 window.viewScreenshot = viewScreenshot;
 
-// ============ VERIFY / DENY WITH PASSWORD ============
 function promptVerify(rid, action) {
-  const actionText = action === 'approve' ? 'Verify' : 'Deny';
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-title">🔐 Confirm ${actionText}</div>
-    <div class="modal-sub">Password dalo: <strong>${actionText}</strong> karne ke liye</div>
-    <div class="form-group">
-      <label>Admin Password</label>
-      <input type="password" id="verifyPassword" placeholder="Enter admin password" autofocus>
-    </div>
-    <button class="btn ${action === 'approve' ? 'btn-success' : 'btn-danger'}" onclick="confirmVerify('${rid}','${action}')">${action === 'approve' ? '✅' : '❌'} ${actionText} Registration</button>
+    <div class="modal-title">🔐 Confirm ${action === 'approve' ? 'Verify' : 'Deny'}</div>
+    <div class="form-group" style="margin-top:16px;"><label>Admin Password</label><input type="password" id="verifyPassword" placeholder="Password"></div>
+    <button class="btn ${action === 'approve' ? 'btn-success' : 'btn-danger'}" onclick="confirmVerify('${rid}','${action}')">Confirm</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
   `;
   document.getElementById('modal').classList.add('show');
-  setTimeout(() => {
-    document.getElementById('verifyPassword')?.focus();
-    document.getElementById('verifyPassword')?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') confirmVerify(rid, action);
-    });
-  }, 100);
+  setTimeout(() => document.getElementById('verifyPassword').focus(), 100);
 }
 window.promptVerify = promptVerify;
 
 async function confirmVerify(rid, action) {
-  const pwd = document.getElementById('verifyPassword').value;
-  if (pwd !== ADMIN_PASSWORD) { showToast('❌ Wrong password', true); return; }
-
-  const r = allRegistrations.find(x => x.id === rid);
-  if (!r) { showToast('❌ Registration not found', true); return; }
+  if (document.getElementById('verifyPassword').value !== ADMIN_PASSWORD) { showToast('❌ Wrong password', true); return; }
+  const r = allRegistrations.find(x => x.id === rid); if (!r) return;
   const t = allTournaments.find(x => x.id === r.tournamentId);
-
   try {
     if (action === 'approve') {
-      await updateDoc(doc(db, 'registrations', rid), {
-        status: 'approved',
-        verifiedAt: serverTimestamp()
-      });
+      await updateDoc(doc(db, 'registrations', rid), { status: 'approved', verifiedAt: serverTimestamp() });
       if (t) await updateDoc(doc(db, 'tournaments', t.id), { joined: (t.joined || 0) + 1 });
-      showToast('✅ Registration approved!');
+      showToast('✅ Approved');
     } else {
-      await updateDoc(doc(db, 'registrations', rid), {
-        status: 'denied',
-        deniedAt: serverTimestamp()
-      });
-      showToast('❌ Registration denied');
+      await updateDoc(doc(db, 'registrations', rid), { status: 'denied', deniedAt: serverTimestamp() });
+      showToast('❌ Denied');
     }
     closeModal();
-  } catch(err) {
-    console.error(err);
-    showToast('❌ Action failed', true);
-  }
+  } catch(err) { showToast('❌ Error', true); }
 }
 window.confirmVerify = confirmVerify;
 
 function filterRegs(filter, el) {
   currentRegFilter = filter;
-  document.querySelectorAll('#admin-registrations .btn-sm').forEach(b => {
-    b.style.background = '';
-    b.style.borderColor = '';
-  });
-  if (el) {
-    el.style.background = 'linear-gradient(135deg,var(--neon),var(--pink))';
-    el.style.borderColor = 'transparent';
-  }
+  document.querySelectorAll('#admin-registrations .btn-sm').forEach(b => { b.style.background = ''; b.style.borderColor = ''; });
+  if (el) { el.style.background = 'linear-gradient(135deg,var(--neon),var(--pink))'; el.style.borderColor = 'transparent'; }
   renderAdminRegistrations();
 }
 window.filterRegs = filterRegs;
@@ -1572,81 +1949,109 @@ function renderAdminRegistrations() {
   const el = document.getElementById('adminRegsList');
   let filtered = allRegistrations;
   if (currentRegFilter !== 'all') filtered = allRegistrations.filter(r => (r.status || 'approved') === currentRegFilter);
-  if (filtered.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">📋</div><p>No registrations in this filter</p></div>`; return; }
-  el.innerHTML = filtered.map(r => regCardHTML(r, false)).join('');
+  el.innerHTML = filtered.length === 0 ? `<div class="empty"><div class="ico">📋</div><p>No registrations</p></div>` : filtered.map(r => regCardHTML(r, false)).join('');
 }
-window.renderAdminRegistrations = renderAdminRegistrations;
 
-async function adminRemoveReg(rid) {
-  if (!confirm('Permanently delete this registration?')) return;
+async function addDummyPlayers(tid) {
+  const t = allTournaments.find(x => x.id === tid);
+  if (!t) return;
+  const slotsLeft = (t.maxSlots || 0) - (t.joined || 0);
+  if (slotsLeft <= 0) { showToast('⚠️ Slots already full', true); return; }
+  if (!confirm(`Add ${slotsLeft} dummy players to fill the tournament?`)) return;
+
   try {
-    const r = allRegistrations.find(x => x.id === rid);
-    await deleteDoc(doc(db, 'registrations', rid));
-    if (r && r.status === 'approved') {
-      const t = allTournaments.find(x => x.id === r.tournamentId);
-      if (t) await updateDoc(doc(db, 'tournaments', t.id), { joined: Math.max(0, (t.joined||1) - 1) });
-    }
-    showToast('✅ Removed');
-  } catch(err) { showToast('❌ Failed', true); }
-}
-window.adminRemoveReg = adminRemoveReg;
+    const batch = writeBatch(db);
+    
+    // Fetch already taken teams
+    const regsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', tid)));
+    const takenTeamIds = regsSnap.docs.map(d => d.data().teamId).filter(Boolean);
+    const availableTeams = UCL_TEAMS.filter(team => !takenTeamIds.includes(team.id));
 
-// ============ ADMIN TOURNAMENTS ============
+    const names = ['Ali', 'Ahmed', 'Usman', 'Hamza', 'Bilal', 'Zain', 'Saad', 'Umar', 'Fawad', 'Tariq', 'Kamran', 'Fahad', 'Adeel', 'Haris', 'Rehan', 'Shoaib'];
+    
+    for (let i = 0; i < slotsLeft; i++) {
+      if (availableTeams.length === 0) break; // All teams taken
+      const team = availableTeams.pop();
+      
+      const dummyId = 'dummy_' + Math.random().toString(36).substr(2, 9);
+      const name = names[Math.floor(Math.random() * names.length)] + ' (Bot)';
+      const regRef = doc(collection(db, 'registrations'));
+      batch.set(regRef, {
+        tournamentId: tid, tournamentName: t.name, userId: dummyId, name: name,
+        cnic: '00000-0000000-' + Math.floor(Math.random()*9), college: 'Test College', phone: '+923001234567',
+        twitchId: 'https://twitch.tv/dummy', gameId: 'Dummy_' + Math.floor(Math.random() * 10000),
+        teamId: team.id, teamName: team.name, teamLogo: team.logo,
+        amount: t.entryFee, isFree: t.entryFee === 0, status: 'approved',
+        registeredAt: serverTimestamp(), verifiedAt: serverTimestamp()
+      });
+    }
+    batch.update(doc(db, 'tournaments', tid), { joined: t.maxSlots });
+    await batch.commit();
+    showToast('✅ Dummy players added!');
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed to add dummy players', true);
+  }
+}
+window.addDummyPlayers = addDummyPlayers;
+
 function renderAdminTournaments() {
   const el = document.getElementById('adminTournamentList');
-  if (allTournaments.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">⚽</div><p>No tournaments</p></div>`; return; }
-  el.innerHTML = allTournaments.map(t => {
+  el.innerHTML = allTournaments.length === 0 ? `<div class="empty"><div class="ico">⚽</div><p>No tournaments</p></div>` : allTournaments.map(t => {
     const isFree = (t.entryFee || 0) === 0;
+    const isFull = (t.joined || 0) >= (t.maxSlots || 0);
+    const canManage = t.status !== 'cancelled';
+    
     return `
     <div class="t-card">
       <div class="t-head">
-        <div>
-          <div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
-          <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'short', timeStyle:'short'}) : 'TBA'}</div>
-        </div>
+        <div><div class="t-name">⚽ ${escapeHtml(t.name)} ${isFree ? '<span class="t-free">FREE</span>' : ''}</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;">${t.format || 'Knockout'} • ${t.startDate ? new Date(t.startDate).toLocaleDateString() : 'TBA'}</div></div>
         <div class="t-status ${t.status}">${t.status}</div>
       </div>
-      <div class="t-meta">
-        <span>🏆 Rs ${(t.prizePool||0).toLocaleString()}</span>
-        <span>💵 ${isFree ? 'FREE' : 'Rs ' + t.entryFee}</span>
-        <span>👥 ${t.joined||0}/${t.maxSlots||0}</span>
-      </div>
+      <div class="t-meta"><span>🏆 Rs ${(t.prizePool||0).toLocaleString()}</span><span>👥 ${t.joined||0}/${t.maxSlots||0}</span></div>
       <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-        <button class="btn btn-outline btn-sm" onclick="editTournament('${t.id}')">✏️ Edit</button>
-        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','open')">✅ Open</button>
-        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','live')">🔴 Live</button>
-        <button class="btn btn-outline btn-sm" onclick="quickStatus('${t.id}','completed')">🏁 Done</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteTournament('${t.id}')">🗑️ Delete</button>
+        ${canManage ? `<button class="btn btn-primary btn-sm" onclick="manageBracket('${t.id}')">⚙️ Manage</button>` : ''}
+        ${!isFull ? `<button class="btn btn-outline btn-sm" onclick="addDummyPlayers('${t.id}')" style="border-color:var(--gold); color:var(--gold);">🤖 Dummy Players</button>` : ''}
+        <button class="btn btn-outline btn-sm" onclick="editTournament('${t.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTournament('${t.id}')">🗑️</button>
       </div>
     </div>
   `}).join('');
 }
 
+async function quickStatus(id, status) {
+  if (status === 'live') {
+    const t = allTournaments.find(x => x.id === id);
+    if (t.joined < t.maxSlots) {
+      showToast('❌ Slots full nahi hain! Live nahi kar sakte.', true);
+      return;
+    }
+  }
+  await updateDoc(doc(db, 'tournaments', id), { status }); 
+  showToast('✅ Status: ' + status); 
+}
+window.quickStatus = quickStatus;
+
 function openCreateTournament() {
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-title">🏆 Create Tournament</div>
-    <div class="modal-sub">Naya eFootball tournament banao (free ya paid)</div>
-    <div class="form-group"><label>Tournament Name</label><input type="text" id="newTName" placeholder="e.g. Swat Championship S1"></div>
-    <div class="form-group"><label>Description</label><textarea id="newTDesc" rows="2" placeholder="Details..."></textarea></div>
+    <div class="form-group"><label>Name</label><input type="text" id="newTName" placeholder="e.g. Swat Championship S1"></div>
     <div class="form-group"><label>Format</label>
       <select id="newTFormat">
-        <option value="Knockout">Knockout (1v1)</option>
-        <option value="League">League</option>
-        <option value="Group+Knockout">Group + Knockout</option>
+        <option value="Group16_4">16 Players - 4 Groups (Top 2 to QF)</option>
+        <option value="Group16_2G">16 Players - 2 Groups (Top 4 to QF)</option>
+        <option value="KO16">16 Players - Pure Knockout</option>
+        <option value="Group8_2">8 Players - 2 Groups (Top 2 to SF)</option>
+        <option value="KO8">8 Players - Pure Knockout</option>
       </select>
     </div>
-    <div class="form-group"><label>Entry Fee (Rs) — 0 = FREE tournament</label><input type="number" id="newTEntry" value="50" min="0"></div>
-    <div class="form-group"><label>Prize Pool (Rs)</label><input type="number" id="newTPrize" value="3000"></div>
-    <div class="form-group"><label>Max Slots</label><input type="number" id="newTSlots" value="16"></div>
-    <div class="form-group"><label>Start Date & Time</label><input type="datetime-local" id="newTDate"></div>
-    <div class="form-group"><label>Status</label>
-      <select id="newTStatus">
-        <option value="open">Open</option>
-        <option value="upcoming">Upcoming</option>
-        <option value="live">Live</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" onclick="createTournament()">Create Tournament</button>
+    <div class="form-group"><label>Entry Fee (0 = FREE)</label><input type="number" id="newTEntry" value="50" min="0"></div>
+    <div class="form-group"><label>Prize Pool</label><input type="number" id="newTPrize" value="3000"></div>
+    <div class="form-group"><label>Max Slots (e.g. 16 or 8)</label><input type="number" id="newTSlots" value="16"></div>
+    <div class="form-group"><label>Start Date</label><input type="datetime-local" id="newTDate"></div>
+    <div class="form-group"><label>Status</label><select id="newTStatus"><option value="open">Open</option><option value="upcoming">Upcoming</option></select></div>
+    <button class="btn btn-primary" onclick="createTournament()">Create</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
   `;
   document.getElementById('modal').classList.add('show');
@@ -1655,48 +2060,30 @@ window.openCreateTournament = openCreateTournament;
 
 async function createTournament() {
   const name = document.getElementById('newTName').value.trim();
-  const description = document.getElementById('newTDesc').value.trim();
-  const format = document.getElementById('newTFormat').value;
-  const entryFee = parseInt(document.getElementById('newTEntry').value) || 0;
-  const prizePool = parseInt(document.getElementById('newTPrize').value) || 0;
-  const maxSlots = parseInt(document.getElementById('newTSlots').value) || 16;
-  const startDate = document.getElementById('newTDate').value;
-  const status = document.getElementById('newTStatus').value;
   if (!name) { showToast('❌ Name required', true); return; }
-  try {
-    await addDoc(collection(db, 'tournaments'), {
-      name, description, format, entryFee, prizePool, maxSlots,
-      startDate: startDate || null,
-      status, joined: 0, game: 'efootball',
-      createdAt: serverTimestamp()
-    });
-    closeModal();
-    showToast('✅ Tournament created' + (entryFee === 0 ? ' (FREE)' : ''));
-  } catch(err) { showToast('❌ Failed to create', true); }
+  await addDoc(collection(db, 'tournaments'), {
+    name, format: document.getElementById('newTFormat').value,
+    entryFee: parseInt(document.getElementById('newTEntry').value) || 0,
+    prizePool: parseInt(document.getElementById('newTPrize').value) || 0,
+    maxSlots: parseInt(document.getElementById('newTSlots').value) || 16,
+    startDate: document.getElementById('newTDate').value || null,
+    status: document.getElementById('newTStatus').value,
+    joined: 0, game: 'efootball', createdAt: serverTimestamp()
+  });
+  closeModal(); showToast('✅ Created');
 }
 window.createTournament = createTournament;
 
 async function editTournament(id) {
-  const t = allTournaments.find(x => x.id === id);
-  if (!t) return;
+  const t = allTournaments.find(x => x.id === id); if (!t) return;
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-title">✏️ Edit Tournament</div>
+    <div class="modal-title">✏️ Edit</div>
     <div class="form-group"><label>Name</label><input type="text" id="etName" value="${escapeHtml(t.name)}"></div>
-    <div class="form-group"><label>Description</label><textarea id="etDesc" rows="2">${escapeHtml(t.description || '')}</textarea></div>
-    <div class="form-group"><label>Format</label>
-      <select id="etFormat">
-        ${['Knockout','League','Group+Knockout'].map(f => `<option ${f === t.format ? 'selected' : ''}>${f}</option>`).join('')}
-      </select>
-    </div>
-    <div class="form-group"><label>Entry Fee (Rs) — 0 = FREE</label><input type="number" id="etEntry" value="${t.entryFee||0}" min="0"></div>
+    <div class="form-group"><label>Entry Fee</label><input type="number" id="etEntry" value="${t.entryFee||0}"></div>
     <div class="form-group"><label>Prize Pool</label><input type="number" id="etPrize" value="${t.prizePool||0}"></div>
     <div class="form-group"><label>Max Slots</label><input type="number" id="etSlots" value="${t.maxSlots||16}"></div>
-    <div class="form-group"><label>Status</label>
-      <select id="etStatus">
-        ${['open','upcoming','live','completed','cancelled'].map(s => `<option ${s === t.status ? 'selected' : ''}>${s}</option>`).join('')}
-      </select>
-    </div>
-    <button class="btn btn-primary" onclick="saveTournament('${id}')">Save Changes</button>
+    <div class="form-group"><label>Status</label><select id="etStatus">${['open','upcoming','live','group_stage','knockout_stage','completed','cancelled'].map(s => `<option ${s === t.status ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+    <button class="btn btn-primary" onclick="saveTournament('${id}')">Save</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
   `;
   document.getElementById('modal').classList.add('show');
@@ -1704,138 +2091,294 @@ async function editTournament(id) {
 window.editTournament = editTournament;
 
 async function saveTournament(id) {
-  const updates = {
+  await updateDoc(doc(db, 'tournaments', id), {
     name: document.getElementById('etName').value.trim(),
-    description: document.getElementById('etDesc').value.trim(),
-    format: document.getElementById('etFormat').value,
     entryFee: parseInt(document.getElementById('etEntry').value) || 0,
     prizePool: parseInt(document.getElementById('etPrize').value) || 0,
     maxSlots: parseInt(document.getElementById('etSlots').value) || 16,
     status: document.getElementById('etStatus').value
-  };
-  if (!updates.name) { showToast('❌ Name required', true); return; }
-  try {
-    await updateDoc(doc(db, 'tournaments', id), updates);
-    closeModal();
-    showToast('✅ Updated');
-  } catch(err) { showToast('❌ Failed', true); }
+  });
+  closeModal(); showToast('✅ Updated');
 }
 window.saveTournament = saveTournament;
 
-async function quickStatus(id, status) {
-  try { await updateDoc(doc(db, 'tournaments', id), { status }); showToast('✅ Status: ' + status); }
-  catch(err) { showToast('❌ Failed', true); }
-}
-window.quickStatus = quickStatus;
-
 async function deleteTournament(id) {
-  if (!confirm('Delete this tournament permanently?')) return;
-  try { await deleteDoc(doc(db, 'tournaments', id)); showToast('✅ Deleted'); }
-  catch(err) { showToast('❌ Failed', true); }
+  if (!confirm('Delete this tournament? All matches and registrations will be permanently removed.')) return;
+  try {
+    showToast('⏳ Deleting data...');
+    const batch = writeBatch(db);
+    const regsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', id)));
+    regsSnap.forEach(doc => batch.delete(doc.ref));
+    const matchesSnap = await getDocs(query(collection(db, 'matches'), where('tournamentId', '==', id)));
+    matchesSnap.forEach(doc => batch.delete(doc.ref));
+    batch.delete(doc(db, 'tournaments', id));
+    await batch.commit();
+    showToast('✅ Deleted');
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed to delete', true);
+  }
 }
 window.deleteTournament = deleteTournament;
 
-// ============ MEMBERS ============
 function renderMembers() {
   const el = document.getElementById('membersList');
   const search = (document.getElementById('memberSearch').value || '').toLowerCase();
-  let filtered = allUsers;
-  if (search) {
-    filtered = allUsers.filter(u =>
-      (u.name||'').toLowerCase().includes(search) ||
-      (u.cnic||'').includes(search) ||
-      (u.college||'').toLowerCase().includes(search) ||
-      (u.phone||'').includes(search)
-    );
-  }
-  if (filtered.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">👥</div><p>No members found</p></div>`; return; }
-  el.innerHTML = filtered.map(u => `
+  let filtered = allUsers.filter(u => (u.name||'').toLowerCase().includes(search) || (u.cnic||'').includes(search) || (u.college||'').toLowerCase().includes(search) || (u.phone||'').includes(search));
+  el.innerHTML = filtered.length === 0 ? `<div class="empty"><div class="ico">👥</div><p>No members</p></div>` : filtered.map(u => `
     <div class="member-row">
       <div class="member-pic">${u.profilePic ? `<img src="${u.profilePic}">` : (u.name||'U').charAt(0).toUpperCase()}</div>
       <div class="member-info">
         <div class="member-name">${escapeHtml(u.name||'—')} ${u.isBanned ? '<span class="badge banned">BANNED</span>' : ''}</div>
         <div class="member-sub">${escapeHtml(u.cnic||'')} • ${escapeHtml(u.college||'')}</div>
       </div>
-      <div class="member-actions">
-        <button class="btn btn-outline btn-sm" onclick="viewMember('${u.uid||u.id}')">👁️</button>
-      </div>
+      <div class="member-actions"><button class="btn btn-outline btn-sm" onclick="viewMember('${u.uid||u.id}')">👁️</button></div>
     </div>
   `).join('');
 }
 window.renderMembers = renderMembers;
 
 async function viewMember(uid) {
-  const u = allUsers.find(x => (x.uid === uid || x.id === uid));
-  if (!u) return;
+  const u = allUsers.find(x => (x.uid === uid || x.id === uid)); if (!u) return;
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-title">👤 ${escapeHtml(u.name)}</div>
-    <div class="modal-sub">${escapeHtml(u.cnic)}</div>
     <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${escapeHtml(u.phone||'—')}</span></div>
-    <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college||'—')}</span></div>
     <div class="info-row"><span class="info-label">Location</span><span class="info-value">${escapeHtml(u.location||'—')}</span></div>
     <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon2);">Link</a>` : '—'}</span></div>
-    <div class="info-row"><span class="info-label">Banned</span><span class="info-value">${u.isBanned ? '🚫 Yes' : '✅ No'}</span></div>
-    <div style="display:flex; gap:8px; margin-top:16px;">
-      <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleBan('${u.uid||u.id}', ${!!u.isBanned})">${u.isBanned ? '✅ Unban' : '🚫 Ban'}</button>
-    </div>
-    <button class="btn btn-danger" style="margin-top:10px;" onclick="removeMember('${u.uid||u.id}')">🗑️ Remove Member</button>
+    <div style="display:flex; gap:8px; margin-top:16px;"><button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleBan('${u.uid||u.id}', ${!!u.isBanned})">${u.isBanned ? '✅ Unban' : '🚫 Ban'}</button></div>
+    <button class="btn btn-danger" style="margin-top:10px;" onclick="removeMember('${u.uid||u.id}')">🗑️ Remove</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
   `;
   document.getElementById('modal').classList.add('show');
 }
 window.viewMember = viewMember;
 
-async function toggleBan(uid, isBanned) {
-  try {
-    await updateDoc(doc(db, 'users', uid), { isBanned: !isBanned });
-    showToast(isBanned ? '✅ Unbanned' : '🚫 Banned');
-    closeModal();
-  } catch(err) { showToast('❌ Failed', true); }
-}
+async function toggleBan(uid, isBanned) { await updateDoc(doc(db, 'users', uid), { isBanned: !isBanned }); closeModal(); showToast('✅ Updated'); }
 window.toggleBan = toggleBan;
 
-async function removeMember(uid) {
-  if (!confirm('Permanently delete this user from Firestore?')) return;
-  try { await deleteDoc(doc(db, 'users', uid)); showToast('✅ Removed'); closeModal(); }
-  catch(err) { showToast('❌ Failed', true); }
-}
+async function removeMember(uid) { if (!confirm('Delete user?')) return; await deleteDoc(doc(db, 'users', uid)); closeModal(); showToast('✅ Removed'); }
 window.removeMember = removeMember;
 
-// ============ ANNOUNCEMENTS ============
 async function sendAnnouncement() {
-  const title = document.getElementById('annTitle').value.trim();
-  const message = document.getElementById('annMessage').value.trim();
-  if (!title || !message) { showToast('❌ Title and message required', true); return; }
-  try {
-    await addDoc(collection(db, 'announcements'), { title, message, createdAt: serverTimestamp() });
-    document.getElementById('annTitle').value = '';
-    document.getElementById('annMessage').value = '';
-    showToast('✅ Announcement sent');
-  } catch(err) { showToast('❌ Failed', true); }
+  const title = document.getElementById('annTitle').value.trim(), message = document.getElementById('annMessage').value.trim();
+  if (!title || !message) return;
+  await addDoc(collection(db, 'announcements'), { title, message, createdAt: serverTimestamp() });
+  document.getElementById('annTitle').value = ''; document.getElementById('annMessage').value = '';
+  showToast('✅ Sent');
 }
 window.sendAnnouncement = sendAnnouncement;
 
 function renderAdminAnnouncements() {
   const el = document.getElementById('adminAnnList');
-  if (allAnnouncements.length === 0) { el.innerHTML = `<div class="empty"><div class="ico">📢</div><p>No announcements</p></div>`; return; }
-  el.innerHTML = allAnnouncements.map(a => `
-    <div class="t-card">
-      <div class="t-head">
-        <div class="t-name">${escapeHtml(a.title)}</div>
-        <button class="btn btn-danger btn-sm" onclick="deleteAnn('${a.id}')">🗑️</button>
-      </div>
-      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5;">${escapeHtml(a.message)}</div>
-    </div>
+  el.innerHTML = allAnnouncements.length === 0 ? `<div class="empty"><div class="ico">📢</div><p>No announcements</p></div>` : allAnnouncements.map(a => `
+    <div class="t-card"><div class="t-head"><div class="t-name">${escapeHtml(a.title)}</div><button class="btn btn-danger btn-sm" onclick="deleteAnn('${a.id}')">🗑️</button></div>
+    <div style="font-size:12px; color:var(--muted); margin-top:6px;">${escapeHtml(a.message)}</div></div>
   `).join('');
 }
-window.renderAdminAnnouncements = renderAdminAnnouncements;
 
-async function deleteAnn(id) {
-  if (!confirm('Delete?')) return;
-  try { await deleteDoc(doc(db, 'announcements', id)); showToast('✅ Deleted'); }
-  catch(err) { showToast('❌ Failed', true); }
-}
+async function deleteAnn(id) { await deleteDoc(doc(db, 'announcements', id)); showToast('✅ Deleted'); }
 window.deleteAnn = deleteAnn;
+
+// ============ GENERAL UI ============
+async function openTournament(id) {
+  const t = allTournaments.find(x => x.id === id); if (!t) return;
+  
+  // Fetch all registrations to know which teams are taken and if user is already in
+  const regsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', id)));
+  const existingRegs = regsSnap.docs.map(d => d.data());
+  
+  const existingReg = existingRegs.find(r => r.userId === currentUser.uid);
+  const takenTeamIds = existingRegs.map(r => r.teamId).filter(Boolean);
+  
+  const startDate = t.startDate ? new Date(t.startDate).toLocaleString('en-PK', {dateStyle:'medium', timeStyle:'short'}) : 'TBA';
+  const slotsLeft = (t.maxSlots || 0) - (t.joined || 0);
+  const isFree = (t.entryFee || 0) === 0;
+  selectedScreenshotBase64 = null;
+  _selectedTeamId = null; _selectedTeamName = null; _selectedTeamLogo = null;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">⚽ ${escapeHtml(t.name)}</div>
+    <div class="modal-sub">${t.format || 'Knockout'} • ${startDate}</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;">
+      <div class="stat-card"><div class="stat-val">Rs ${(t.prizePool||0).toLocaleString()}</div><div class="stat-lbl">Prize</div></div>
+      <div class="stat-card"><div class="stat-val">${isFree ? 'FREE' : 'Rs ' + t.entryFee}</div><div class="stat-lbl">Entry</div></div>
+      <div class="stat-card"><div class="stat-val">${slotsLeft}</div><div class="stat-lbl">Slots Left</div></div>
+    </div>
+    ${!currentProfile.twitchId ? `<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:10px; font-size:12px; color:#fca5a5; margin-bottom:14px;">⚠️ Add Twitch ID in profile to register</div>` : ''}
+    
+    ${existingReg ? `
+      <div style="text-align:center; padding:16px; background:rgba(16,185,129,0.1); border-radius:12px; color:#6ee7b7; font-weight:600; margin-bottom:14px;">
+        ✅ You are registered<br>
+        <span style="font-size:16px; margin-top:4px; display:block;">${existingReg.teamLogo ? `<img src="${existingReg.teamLogo}" referrerpolicy="no-referrer" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;margin-right:4px;">` : ''} ${escapeHtml(existingReg.teamName)}</span>
+      </div>
+    ` : (t.status === 'open' && slotsLeft > 0 && currentProfile.twitchId) ? `
+      <div class="form-group"><label>eFootball Game ID</label><input type="text" id="regGameId" placeholder="e.g. ProGamer_123"></div>
+      
+      <div class="form-group">
+        <label>Select Your Team <span class="req">*</span></label>
+        <div class="team-grid" id="teamGrid">
+          ${UCL_TEAMS.map(team => {
+            const isTaken = takenTeamIds.includes(team.id);
+            return `
+              <div class="team-btn ${isTaken ? 'disabled' : ''}" data-id="${team.id}" data-name="${team.name}" data-logo="${team.logo}" onclick="selectTeam(this, ${isTaken})">
+                <span class="team-name">${team.name}</span>
+                <img src="${team.logo}" class="team-logo" alt="${team.name}" referrerpolicy="no-referrer">
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <div class="form-hint">Greyed out teams are already taken.</div>
+      </div>
+
+      ${isFree ? `<div style="background:rgba(16,185,129,0.1); padding:10px; border-radius:10px; font-size:12px; color:#6ee7b7; margin-bottom:14px;">🎁 FREE tournament</div>` : `
+        <div class="form-group"><label>Payment Screenshot</label><div class="screenshot-upload" onclick="document.getElementById('screenshotInput').click()"><div class="screenshot-preview" id="screenshotPreview">📷</div><div style="flex:1;"><div style="font-size:13px; font-weight:700;">Upload screenshot</div><div style="font-size:11px; color:var(--muted);">Rs ${t.entryFee} payment karke</div></div></div><input type="file" id="screenshotInput" accept="image/*" style="display:none;" onchange="handleScreenshotSelect(event)"></div>
+      `}
+      <button class="btn btn-primary" onclick="registerTournament('${t.id}', ${isFree}, ${t.entryFee || 0})">🚀 Register</button>
+    ` : ''}
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.openTournament = openTournament;
+
+function selectTeam(el, isTaken) {
+  if (isTaken) return;
+  document.querySelectorAll('.team-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  _selectedTeamId = el.dataset.id;
+  _selectedTeamName = el.dataset.name;
+  _selectedTeamLogo = el.dataset.logo;
+}
+window.selectTeam = selectTeam;
+
+async function handleScreenshotSelect(e) {
+  const file = e.target.files[0]; if (!file) return;
+  selectedScreenshotBase64 = await fileToBase64(file, 500, 0.7);
+  document.getElementById('screenshotPreview').innerHTML = `<img src="${selectedScreenshotBase64}">`;
+}
+window.handleScreenshotSelect = handleScreenshotSelect;
+
+async function registerTournament(id, isFree, amount) {
+  const gameId = document.getElementById('regGameId').value.trim();
+  
+  if (!gameId) return showToast('❌ Game ID required', true);
+  if (!_selectedTeamId) return showToast('❌ Please select a team', true);
+  if (!isFree && !selectedScreenshotBase64) return showToast('❌ Screenshot required', true);
+
+  const t = allTournaments.find(x => x.id === id);
+
+  try {
+    // Fetch fresh data to prevent race conditions
+    const regsSnap = await getDocs(query(collection(db, 'registrations'), where('tournamentId', '==', id)));
+    const existingRegs = regsSnap.docs.map(d => d.data());
+
+    if (existingRegs.some(r => r.userId === currentUser.uid)) {
+      return showToast('❌ You are already registered in this tournament!', true);
+    }
+    if (existingRegs.some(r => r.name.toLowerCase() === currentProfile.name.toLowerCase())) {
+      return showToast('❌ A player with this exact name is already registered!', true);
+    }
+    if (existingRegs.some(r => r.teamId === _selectedTeamId)) {
+      return showToast('❌ This team has just been taken by someone else!', true);
+    }
+
+    const status = isFree ? 'approved' : 'pending';
+    
+    await addDoc(collection(db, 'registrations'), {
+      tournamentId: id, tournamentName: t.name, userId: currentUser.uid, name: currentProfile.name,
+      cnic: currentProfile.cnic, college: currentProfile.college, phone: currentProfile.phone,
+      twitchId: currentProfile.twitchId, gameId, amount, isFree, paymentScreenshot: isFree ? null : selectedScreenshotBase64,
+      teamId: _selectedTeamId, teamName: _selectedTeamName, teamLogo: _selectedTeamLogo,
+      status, registeredAt: serverTimestamp(), verifiedAt: isFree ? serverTimestamp() : null
+    });
+    
+    if (isFree) await updateDoc(doc(db, 'tournaments', id), { joined: (t.joined || 0) + 1 });
+    
+    closeModal();
+    
+    // Show WhatsApp Channel Popup
+    showChannelPopup();
+    
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Registration failed', true);
+  }
+}
+window.registerTournament = registerTournament;
+
+function showChannelPopup() {
+  document.getElementById('modalBody').innerHTML = `
+    <div style="text-align:center; padding:20px 0;">
+      <div style="font-size:64px; margin-bottom:16px;">📢</div>
+      <div class="modal-title" style="text-align:center;">Join Our WhatsApp Channel!</div>
+      <div class="modal-sub" style="text-align:center; margin-top:8px;">
+        Get all tournament updates, match schedules, and announcements directly on WhatsApp.<br><br>
+        <strong style="color:var(--neon2);">Stay connected with Campus League!</strong>
+      </div>
+      <a href="${WA_CHANNEL_URL}" target="_blank" class="btn btn-success" style="margin-top:20px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;">
+        💬 Join Channel Now
+      </a>
+      <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Maybe Later</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.showChannelPopup = showChannelPopup;
+
+function go(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.go = go;
+
+function renderProfilePage() {
+  const u = currentProfile; if (!u) return;
+  document.getElementById('profileAvatar').innerHTML = u.profilePic ? `<img src="${u.profilePic}">` : u.name.charAt(0).toUpperCase();
+  document.getElementById('profileName').textContent = u.name;
+  document.getElementById('profileCollege').textContent = u.college;
+  document.getElementById('profileInfo').innerHTML = `
+    <div class="info-row"><span class="info-label">CNIC</span><span class="info-value">${escapeHtml(u.cnic)}</span></div>
+    <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${escapeHtml(u.phone)}</span></div>
+    <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college)}</span></div>
+    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon2);">Link</a>` : 'Not set'}</span></div>
+  `;
+}
+
+function editProfile() {
+  const u = currentProfile;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">✏️ Edit Profile</div>
+    <div class="form-group"><label>Name</label><input type="text" id="editName" value="${escapeHtml(u.name)}"></div>
+    <div class="form-group"><label>College</label><input type="text" id="editCollege" value="${escapeHtml(u.college)}"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="editLocation" value="${escapeHtml(u.location)}"></div>
+    <div class="form-group"><label>Twitch ID</label><input type="url" id="editTwitch" value="${escapeHtml(u.twitchId || '')}"></div>
+    <button class="btn btn-primary" onclick="saveProfile()">Save</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+window.editProfile = editProfile;
+
+async function saveProfile() {
+  const updates = {
+    name: document.getElementById('editName').value.trim(), college: document.getElementById('editCollege').value.trim(),
+    location: document.getElementById('editLocation').value.trim(), twitchId: document.getElementById('editTwitch').value.trim()
+  };
+  await updateDoc(doc(db, 'users', currentUser.uid), updates);
+  currentProfile = { ...currentProfile, ...updates };
+  closeModal(); renderProfilePage(); renderUserHeader(); showToast('✅ Updated');
+}
+window.saveProfile = saveProfile;
+
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+window.closeModal = closeModal;
+document.getElementById('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+
+function reloadEfhub() { const f = document.getElementById('efhubFrame'); if (f) f.src = f.src; showToast('🔄 Reloading...'); }
+window.reloadEfhub = reloadEfhub;
 
 </script>
 </body>
