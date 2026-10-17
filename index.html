@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#06080b">
-<title>Campus League — eFootball</title>
+<title>EFCL — eFootball Tournament</title>
 
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -41,25 +41,6 @@
   .text-neon { color: var(--neon); }
   .text-muted { color: var(--muted); }
   
-  #splash{
-    position:fixed; inset:0; z-index:9999;
-    background:#06080b;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    transition:opacity .6s,visibility .6s;
-  }
-  #splash.hide{opacity:0;visibility:hidden;}
-  .splash-logo{
-    font-size:36px; font-weight:900; letter-spacing:-1px; text-align:center;
-    color:var(--neon);
-    text-shadow: 0 0 20px rgba(204,255,0,0.3);
-    animation:pulse 1.5s ease infinite;
-  }
-  .splash-sub{color:var(--muted); margin-top:8px; font-size:12px; letter-spacing:4px; text-transform:uppercase;}
-  .loader{margin-top:40px; width:180px; height:3px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;}
-  .loader::after{content:''; display:block; height:100%; width:40%; background:var(--neon); animation:load 1.2s ease infinite; border-radius:3px;}
-  @keyframes load{0%{transform:translateX(-100%);} 100%{transform:translateX(350%);}}
-  @keyframes pulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.05);}}
-
   /* AUTH SCREEN */
   #authScreen{display:none; padding:24px 20px; max-width:520px; margin:0 auto; min-height:100vh;}
   #authScreen.active{display:block;}
@@ -431,16 +412,10 @@
 </head>
 <body>
 
-<div id="splash">
-  <div class="splash-logo">CAMPUS LEAGUE<br>eFOOTBALL</div>
-  <div class="splash-sub">Esports Arena</div>
-  <div class="loader"></div>
-</div>
-
 <div id="authScreen">
   <div class="auth-logo">
-    <h1>⚽ Campus League</h1>
-    <p>eFootball Championship</p>
+    <h1>⚽ EFCL</h1>
+    <p>eFootball Championship League</p>
   </div>
 
   <div class="tabs">
@@ -538,7 +513,7 @@
     <div class="page active" id="page-home">
       <div class="hero">
         <h1>Welcome, <span id="homeUserName">Player</span> 👋</h1>
-        <p> khelo, Jeeto, kamao, aur champion bano.</p>
+        <p>Apne college ki izzat ke liye khelo. Jeeto, kamao, aur champion bano.</p>
       </div>
       <div class="section-title"><h2>🔥 Active Tournaments</h2></div>
       <div id="homeTournaments"></div>
@@ -615,7 +590,7 @@
   <div class="admin-header">
     <div>
       <div class="admin-title"><span>🔐 Admin Panel</span></div>
-      <div style="font-size:10px; color:var(--muted); margin-top:2px; font-weight: 600;">Campus League eFootball</div>
+      <div style="font-size:10px; color:var(--muted); margin-top:2px; font-weight: 600;">EFCL eFootball</div>
     </div>
     <div class="admin-header-actions">
       <button class="member-switch-btn" onclick="switchToMember()">👤 Member</button>
@@ -848,7 +823,6 @@ window.showToast = showToast;
 function escapeHtml(s) { return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 window.escapeHtml = escapeHtml;
 
-window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hide'), 1500));
 document.getElementById('signupCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
 document.getElementById('loginCnic').addEventListener('input', (e) => e.target.value = fmtCnic(e.target.value));
 
@@ -966,7 +940,7 @@ async function logout() { await signOut(auth); location.reload(); }
 window.logout = logout;
 
 function contactAdmin() {
-  window.open('https://wa.me/923299950239?text=Assalam%20o%20Alaikum%20Admin,%20mujhe%20Campus%20League%20mein%20madad%20chahiye.', '_blank');
+  window.open('https://wa.me/923299950239?text=Assalam%20o%20Alaikum%20Admin,%20mujhe%20EFCL%20mein%20madad%20chahiye.', '_blank');
 }
 window.contactAdmin = contactAdmin;
 
@@ -2336,7 +2310,7 @@ function showChannelPopup() {
       <div class="modal-title" style="text-align:center;">Join Our WhatsApp Channel!</div>
       <div class="modal-sub" style="text-align:center; margin-top:8px; font-weight: 600;">
         Get all tournament updates, match schedules, and announcements directly on WhatsApp.<br><br>
-        <strong style="color:var(--neon);">Stay connected with Campus League!</strong>
+        <strong style="color:var(--neon);">Stay connected with EFCL!</strong>
       </div>
       <a href="${WA_CHANNEL_URL}" target="_blank" class="btn btn-primary" style="margin-top:20px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;">
         💬 Join Channel Now
