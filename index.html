@@ -485,12 +485,6 @@
       <div class="form-err" id="errPassword">Password must be at least 6 characters</div>
     </div>
 
-    <div class="form-group">
-      <label>Twitch ID Link (Optional)</label>
-      <input type="url" id="signupTwitch" placeholder="https://twitch.tv/yourname">
-      <div class="form-hint">⚠️ Compulsory for tournament participation</div>
-    </div>
-
     <button class="btn btn-primary" id="signupBtn" onclick="doSignup()">Create Account</button>
     <div style="height:20px;"></div>
   </div>
@@ -892,7 +886,6 @@ async function doSignup() {
   const college = document.getElementById('signupCollege').value.trim();
   const location = document.getElementById('signupLocation').value.trim();
   const password = document.getElementById('signupPassword').value;
-  const twitch = document.getElementById('signupTwitch').value.trim();
   document.querySelectorAll('.form-err').forEach(e => e.classList.remove('show'));
 
   if (!name) { showToast('❌ Name required', true); return; }
@@ -911,7 +904,7 @@ async function doSignup() {
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
     await setDoc(doc(db, 'users', userCred.user.uid), {
       uid: userCred.user.uid, name, cnic, phone: normalizePhone(phone), college, location,
-      twitchId: twitch || '', profilePic: selectedPicBase64, isAdmin: false, isBanned: false, createdAt: serverTimestamp()
+      profilePic: selectedPicBase64, isAdmin: false, isBanned: false, createdAt: serverTimestamp()
     });
     showToast('✅ Account created!');
   } catch (err) {
@@ -2005,7 +1998,7 @@ async function addDummyPlayers(tid) {
       batch.set(regRef, {
         tournamentId: tid, tournamentName: t.name, userId: dummyId, name: name,
         cnic: '00000-0000000-' + Math.floor(Math.random()*9), college: 'Test College', phone: '+923001234567',
-        twitchId: 'https://twitch.tv/dummy', gameId: 'Dummy_' + Math.floor(Math.random() * 10000),
+        gameId: 'Dummy_' + Math.floor(Math.random() * 10000),
         teamId: team.id, teamName: team.name, teamLogo: team.logo,
         amount: t.entryFee, isFree: t.entryFee === 0, status: 'approved',
         registeredAt: serverTimestamp(), verifiedAt: serverTimestamp()
@@ -2170,7 +2163,6 @@ async function viewMember(uid) {
     <div class="modal-title">👤 ${escapeHtml(u.name)}</div>
     <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${escapeHtml(u.phone||'—')}</span></div>
     <div class="info-row"><span class="info-label">Location</span><span class="info-value">${escapeHtml(u.location||'—')}</span></div>
-    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon);">Link</a>` : '—'}</span></div>
     <div style="display:flex; gap:8px; margin-top:16px;"><button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleBan('${u.uid||u.id}', ${!!u.isBanned})">${u.isBanned ? '✅ Unban' : '🚫 Ban'}</button></div>
     <button class="btn btn-danger" style="margin-top:10px;" onclick="removeMember('${u.uid||u.id}')">🗑️ Remove</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Close</button>
@@ -2290,14 +2282,13 @@ async function openTournament(id) {
       <div class="stat-card"><div class="stat-val">${isFree ? 'FREE' : 'Rs ' + t.entryFee}</div><div class="stat-lbl">Entry</div></div>
       <div class="stat-card"><div class="stat-val">${slotsLeft}</div><div class="stat-lbl">Slots Left</div></div>
     </div>
-    ${!currentProfile.twitchId ? `<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:8px; font-size:12px; color:#fca5a5; margin-bottom:14px; font-weight: 600;">⚠️ Add Twitch ID in profile to register</div>` : ''}
     
     ${existingReg ? `
       <div style="text-align:center; padding:16px; background:rgba(204,255,0,0.1); border-radius:8px; color:var(--neon); font-weight:800; margin-bottom:14px; border: 1px solid rgba(204,255,0,0.2);">
         ✅ You are registered<br>
         <span style="font-size:16px; margin-top:4px; display:block;">${existingReg.teamLogo ? `<img src="${existingReg.teamLogo}" referrerpolicy="no-referrer" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;margin-right:4px;">` : ''} ${escapeHtml(existingReg.teamName)}</span>
       </div>
-    ` : (t.status === 'open' && slotsLeft > 0 && currentProfile.twitchId) ? `
+    ` : (t.status === 'open' && slotsLeft > 0) ? `
       ${payHtml}
       <div class="form-group"><label>eFootball Game ID</label><input type="text" id="regGameId" placeholder="e.g. ProGamer_123"></div>
       
@@ -2373,7 +2364,7 @@ async function registerTournament(id, isFree, amount) {
     await addDoc(collection(db, 'registrations'), {
       tournamentId: id, tournamentName: t.name, userId: currentUser.uid, name: currentProfile.name,
       cnic: currentProfile.cnic, college: currentProfile.college, phone: currentProfile.phone,
-      twitchId: currentProfile.twitchId, gameId, amount, isFree, paymentScreenshot: isFree ? null : selectedScreenshotBase64,
+      gameId, amount, isFree, paymentScreenshot: isFree ? null : selectedScreenshotBase64,
       teamId: _selectedTeamId, teamName: _selectedTeamName, teamLogo: _selectedTeamLogo,
       status, registeredAt: serverTimestamp(), verifiedAt: isFree ? serverTimestamp() : null
     });
@@ -2429,7 +2420,6 @@ function renderProfilePage() {
     <div class="info-row"><span class="info-label">CNIC</span><span class="info-value">${escapeHtml(u.cnic)}</span></div>
     <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${escapeHtml(u.phone)}</span></div>
     <div class="info-row"><span class="info-label">College</span><span class="info-value">${escapeHtml(u.college)}</span></div>
-    <div class="info-row"><span class="info-label">Twitch</span><span class="info-value">${u.twitchId ? `<a href="${escapeHtml(u.twitchId)}" target="_blank" style="color:var(--neon); font-weight: 800;">Link</a>` : 'Not set'}</span></div>
   `;
 }
 
@@ -2440,7 +2430,6 @@ function editProfile() {
     <div class="form-group"><label>Name</label><input type="text" id="editName" value="${escapeHtml(u.name)}"></div>
     <div class="form-group"><label>College</label><input type="text" id="editCollege" value="${escapeHtml(u.college)}"></div>
     <div class="form-group"><label>Location</label><input type="text" id="editLocation" value="${escapeHtml(u.location)}"></div>
-    <div class="form-group"><label>Twitch ID</label><input type="url" id="editTwitch" value="${escapeHtml(u.twitchId || '')}"></div>
     <button class="btn btn-primary" onclick="saveProfile()">Save</button>
     <button class="btn btn-outline" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
   `;
@@ -2451,7 +2440,7 @@ window.editProfile = editProfile;
 async function saveProfile() {
   const updates = {
     name: document.getElementById('editName').value.trim(), college: document.getElementById('editCollege').value.trim(),
-    location: document.getElementById('editLocation').value.trim(), twitchId: document.getElementById('editTwitch').value.trim()
+    location: document.getElementById('editLocation').value.trim()
   };
   await updateDoc(doc(db, 'users', currentUser.uid), updates);
   currentProfile = { ...currentProfile, ...updates };
